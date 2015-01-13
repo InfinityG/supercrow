@@ -1,0 +1,248 @@
+<section class="section container-fluid">
+    <h1 class="page-header">Steps</h1>
+
+    <div class="scrollable">
+        <div class="scrollable-content" ng-model="newContract">
+            <!--<div class="section">-->
+            <!--<div class="input-group input-group-lg">-->
+            <!--<span class="input-group-addon"><div class="fa fa-pencil"></div> </span>-->
+            <!--<input type="text" class="form-control" aria-label="Name" placeholder="Contract name"/>-->
+            <!--</div>-->
+            <!--<br/>-->
+
+            <!--<div class="input-group input-group-lg">-->
+            <!--<span class="input-group-addon"><div class="fa fa-pencil"></div> </span>-->
+            <!--<input type="text" class="form-control" aria-label="Description"-->
+            <!--placeholder="Contract description"/>-->
+            <!--</div>-->
+            <!--</div>-->
+
+            <div class="section">
+                <div class="panel-group" ui-state='myAccordion' ui-default='1'>
+
+                    <!-- CONTRACT NAME AND DESCRIPTION -->
+                    <div class="panel panel-default">
+
+                        <div class="panel-heading" ui-set="{'myAccordion': 1}">
+                            <div class="fa fa-pencil fa-2x">
+                            </div>
+                            <span class="fa fa-2x pull-right">name</span>
+
+
+                        </div>
+
+                        <div ui-if="myAccordion == 1" ui-scope-context='1'>
+                            <div class="panel-body">
+                                <div class="input-group input-group-lg">
+                                    <span class="input-group-addon"><div class="fa fa-pencil"></div> </span>
+                                    <input type="text" class="form-control" aria-label="Name"
+                                           placeholder="Contract name" ng-model="currentContract.name"/>
+                                </div>
+                                <br/>
+
+                                <div class="input-group input-group-lg">
+                                    <span class="input-group-addon"><div class="fa fa-pencil"></div> </span>
+                                    <input type="text" class="form-control" aria-label="Description"
+                                           placeholder="Contract description" ng-model="currentContract.description"/>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- PAY -->
+                    <div class="panel panel-default">
+
+                        <div class="panel-heading" ui-set="{'myAccordion': 2}">
+                            <div class="fa fa-money fa-2x">
+                            </div>
+                            <span class="fa fa-2x pull-right">pay</span>
+
+
+                        </div>
+
+                        <div ui-if="myAccordion == 2" ui-scope-context='2'>
+                            <div class="panel-body">
+                                <div class="input-group input-group-lg">
+                                    <span class="input-group-addon"><div class="fa fa-btc"></div> </span>
+                                    <input type="text" class="form-control" aria-label="Amount"
+                                           ng-model="currentContract.conditions[0].trigger.transactions[0].amount">
+                                    <span class="input-group-addon">.00</span>
+                                </div>
+
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- WHO -->
+                    <div class="panel panel-default">
+
+                        <div class="panel-heading" ui-set="{'myAccordion': 3}">
+                            <span class=" fa fa-2x pull-right">who</span>
+
+                            <div class="fa fa-user fa-2x">
+                            </div>
+
+                        </div>
+                        <div ui-if="myAccordion == 3" ui-scope-context='3'>
+                            <div class="panel-body">
+                                <div class="btn-group btn-group-lg">
+
+                                    <div class="input-group input-group-lg">
+                                        <span class="input-group-addon dropdown-toggle" ui-turn-on='contactDropdown'>
+                                            <i class="fa fa-ellipsis-v"></i>
+                                        </span>
+                                        <input type="text" class="form-control" placeholder="Select contact" aria-label="Contact"
+                                                ng-model="currentReceiver.name"/>
+                                    </div>
+
+                                    <ul class="dropdown-menu"
+                                        ui-outer-click="Ui.turnOff('contactDropdown')"
+                                        ui-outer-click-if="Ui.active('contactDropdown')"
+                                        role="menu"
+                                        ui-show="contactDropdown"
+                                        ui-state="contactDropdown"
+                                        ui-turn-off="contactDropdown">
+
+                                        <li ng-repeat="contact in contacts" ng-click="receiverSelected(contact);">
+                                            <a>{{contact.name}}</a>
+                                        </li>
+                                    </ul>
+                                </div>
+                            </div>
+                        </div>
+
+                    </div>
+
+                    <!-- FOR -->
+                    <div class="panel panel-default">
+
+                        <div class="panel-heading" ui-set="{'myAccordion': 4}">
+                            <span class="fa fa-2x pull-right">for</span>
+
+                            <div class="fa fa-question-circle fa-2x">
+                            </div>
+
+                        </div>
+                        <div ui-if="myAccordion == 4" ui-scope-context='4'>
+                            <div class="panel-body">
+                                <div class="btn-group btn-group-lg">
+
+                                    <div class="input-group input-group-lg">
+                                        <span class="input-group-addon dropdown-toggle" ui-turn-on='reasonDropdown'>
+                                            <i class="fa fa-ellipsis-v"></i>
+                                        </span>
+                                        <input type="text" class="form-control" placeholder="Enter reason or select" aria-label="Reason"
+                                               ng-model="currentContract.conditions[0].name"/>
+                                    </div>
+
+                                    <ul class="dropdown-menu"
+                                        ui-outer-click="Ui.turnOff('reasonDropdown')"
+                                        ui-outer-click-if="Ui.active('reasonDropdown')"
+                                        role="menu"
+                                        ui-show="reasonDropdown"
+                                        ui-state="reasonDropdown"
+                                        ui-turn-off="reasonDropdown">
+
+                                        <li ng-repeat="reason in cannedReasons" ng-click="reasonSelected(reason);">
+                                            <a>{{reason}}</a>
+                                        </li>
+                                    </ul>
+                                </div>
+                            </div>
+                        </div>
+
+
+                    </div>
+
+                    <!-- IF -->
+                    <div class="panel panel-default">
+
+                        <div class="panel-heading" ui-set="{'myAccordion': 5}">
+                            <span class="fa fa-2x pull-right">if</span>
+
+                            <div class="fa fa-key fa-2x">
+                            </div>
+
+                        </div>
+                        <div ui-if="myAccordion == 5" ui-scope-context='5'>
+                            <div class="panel-body">
+                                <div class="btn-group btn-group-lg">
+                                    A confirmation email is sent by:
+                                    <div class="input-group input-group-lg">
+
+                                        <span class="input-group-addon dropdown-toggle" ui-turn-on='oracleDropdown'><i
+                                                class="fa fa-ellipsis-v"></i> </span>
+                                        <input type="text" class="form-control" placeholder="Select contact"
+                                               aria-label="Oracle" ng-model="currentOracle.name"/>
+                                    </div>
+
+                                    <ul
+                                            class="dropdown-menu"
+                                            ui-outer-click="Ui.turnOff('oracleDropdown')"
+                                            ui-outer-click-if="Ui.active('oracleDropdown')"
+                                            role="menu"
+                                            ui-show="oracleDropdown"
+                                            ui-state="oracleDropdown"
+                                            ui-turn-off="oracleDropdown">
+
+                                        <li ng-repeat="contact in contacts" ng-click="oracleSelected(contact);">
+                                            <a>{{contact.name}} ({{contact.email}})</a>
+                                        </li>
+                                    </ul>
+
+
+                                </div>
+
+                                <div class="btn-group btn-group-lg">
+                                    And the subject contains:
+                                    <div class="input-group input-group-lg">
+                                        <span class="input-group-addon"><div class="fa fa-pencil"></div> </span>
+                                        <input type="text" class="form-control" aria-label="Description"
+                                               placeholder="Subject text"/>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                    </div>
+
+                    <!-- WHEN -->
+                    <div class="panel panel-default">
+
+                        <div class="panel-heading" ui-set="{'myAccordion': 6}">
+
+                            <span class="fa fa-2x pull-right">when</span>
+                            <!--<span class="fa fa-2x fa-check-circle-o" style="text-align: center; color: #008000"></span>-->
+                            <div class="fa fa-clock-o fa-2x">
+                            </div>
+
+                        </div>
+                        <div ui-if="myAccordion == 6" ui-scope-context='6'>
+                            <div class="panel-body">
+                                <div class="input-group input-group-lg">
+                                    <span class="input-group-addon"><div class="fa fa-pencil"></div> </span>
+                                    <input type="text" class="form-control" aria-label="Description"
+                                           placeholder="Expires (DD/MM/YYYY)" ng-model="currentContract.expires"/>
+                                </div>
+                            </div>
+                        </div>
+
+                    </div>
+
+                </div>
+
+            </div>
+
+            <!--<div class="section">-->
+            <div class="navbar navbar-app">
+                <!-- ... -->
+
+                <div class="btn-group btn-group-lg justified nav-tabs">
+                    <a class="btn">Clear</a>
+                    <a class="btn" ng-click="saveContract();">Create</a>
+                </div>
+            </div>
+            <!--</div>-->
+        </div>
+    </div>
+</section>
