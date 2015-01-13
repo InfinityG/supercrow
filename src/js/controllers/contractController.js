@@ -33,7 +33,7 @@
         $scope.currentOracle = null;
 
         $scope.contracts = null;
-        $scope.selectedContract = null;
+        //$scope.selectedContract = null;
         $scope.currentContract = null;
         $scope.newContract = {
             name: '',
@@ -174,8 +174,8 @@
             $scope.currentContract.conditions[0].description = reason;
         };
 
-        $scope.contractSelected = function (id) {
-            $scope.selectedContract = localStorageService.getContract(id);
+        $scope.contractSelected = function (contract) {
+            $scope.currentContract = contract;
         };
 
         $scope.receiverSelected = function (contact) {

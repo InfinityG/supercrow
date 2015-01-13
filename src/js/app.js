@@ -11,6 +11,11 @@ angular.module('superCrow', [
           templateUrl:'contract.html',
           reloadOnSearch: false
       })
+      .when('/contracts', {
+          controller: 'ContractsController',
+          templateUrl:'contractList.html',
+          reloadOnSearch: false
+      })
       .when('/configuration', {
           templateUrl:'configuration.html',
           reloadOnSearch: false

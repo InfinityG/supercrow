@@ -1,0 +1,98 @@
+<section class="section container-fluid">
+    <h1 class="page-header">Steps</h1>
+
+    <div class="scrollable">
+        <div class="scrollable-content" ng-model="contracts">
+            <!--<div class="section">-->
+            <!--<div class="input-group input-group-lg">-->
+            <!--<span class="input-group-addon"><div class="fa fa-pencil"></div> </span>-->
+            <!--<input type="text" class="form-control" aria-label="Name" placeholder="Contract name"/>-->
+            <!--</div>-->
+            <!--<br/>-->
+
+            <!--<div class="input-group input-group-lg">-->
+            <!--<span class="input-group-addon"><div class="fa fa-pencil"></div> </span>-->
+            <!--<input type="text" class="form-control" aria-label="Description"-->
+            <!--placeholder="Contract description"/>-->
+            <!--</div>-->
+            <!--</div>-->
+
+            <div class="section">
+                <div class="panel-group" ui-state='myAccordion' ui-default='1'>
+
+                    <!-- CONTRACT NAME AND DESCRIPTION -->
+                    <div class="panel panel-default">
+
+                        <div class="panel-heading" ui-set="{'myAccordion': 1}">
+                            <div class="fa fa-pencil fa-2x">
+                            </div>
+                            <span class="fa fa-2x pull-right">saved</span>
+
+
+                        </div>
+
+                        <div ui-if="myAccordion == 1" ui-scope-context='1'>
+                            <div class="panel-body">
+                                <div class="btn-group btn-group-lg">
+
+                                    <div class="input-group input-group-lg">
+                                        <span class="input-group-addon dropdown-toggle" ui-turn-on='contractDropdown'>
+                                            <i class="fa fa-ellipsis-v"></i>
+                                        </span>
+                                        <input type="text" class="form-control" placeholder="Select a contract" aria-label="Reason"
+                                               ng-model="currentContract.name"/>
+                                    </div>
+
+                                    <ul class="dropdown-menu"
+                                        ui-outer-click="Ui.turnOff('contractDropdown')"
+                                        ui-outer-click-if="Ui.active('contractDropdown')"
+                                        role="menu"
+                                        ui-show="contractDropdown"
+                                        ui-state="contractDropdown"
+                                        ui-turn-off="contractDropdown">
+
+                                        <li ng-repeat="contract in contracts" ng-click="contractSelected(contract);">
+                                            <a>{{contract.name}} - {{contract.description}}</a>
+                                        </li>
+                                    </ul>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- PAY -->
+                    <div class="panel panel-default">
+
+                        <div class="panel-heading" ui-set="{'myAccordion': 2}">
+                            <div class="fa fa-money fa-2x">
+                            </div>
+                            <span class="fa fa-2x pull-right">sent</span>
+
+
+                        </div>
+
+                        <div ui-if="myAccordion == 2" ui-scope-context='2'>
+                            <div class="panel-body">
+
+
+                            </div>
+                        </div>
+                    </div>
+
+                </div>
+
+            </div>
+
+            <!--<div class="section">-->
+            <div class="navbar navbar-app">
+                <!-- ... -->
+
+                <div class="btn-group btn-group-lg justified nav-tabs">
+                    <a class="btn">Clear</a>
+                    <a class="btn">Create</a>
+                </div>
+            </div>
+            <!--</div>-->
+        </div>
+    </div>
+</section>
