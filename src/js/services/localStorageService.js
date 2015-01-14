@@ -12,12 +12,31 @@
             if(result == null)
                 result = [];
 
+            result.sort(function(a,b){
+                return a.id - b.id;
+            });
+
             return result;
         };
 
         factory.saveContract = function(contract) {
             var contracts = factory.getContracts();
+
+            //check that a contract with the same name doesn't already exist
+            for(var x=0; x<contracts.length; x++) {
+                if(contract.name == contracts[x].name){
+                    throw 'A contract with this name already exists!';
+                }
+            }
+
+            //set the id of the contract
+            if(contracts.length > 0)
+                contract.id = contracts[contracts.length - 1].id + 1;
+            else
+                contract.id = 1;
+
             contracts.push(contract);
+
             localStorage.removeItem('superCrow.contracts');
             localStorage.setItem('superCrow.contracts', JSON.stringify(contracts));
         };

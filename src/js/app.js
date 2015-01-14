@@ -6,7 +6,7 @@ angular.module('superCrow', [
 
 .config(function($routeProvider) {
   $routeProvider
-      .when('/', {
+      .when('/contract/:contractId?', {
           controller: 'ContractsController',
           templateUrl:'contract.html',
           reloadOnSearch: false
