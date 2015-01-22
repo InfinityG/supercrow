@@ -64,7 +64,7 @@
                         <div ui-if="myAccordion == 2" ui-scope-context='2'>
                             <div class="panel-body">
                                 <div class="input-group input-group-lg">
-                                    <span class="input-group-addon"><div class="fa fa-btc"></div> </span>
+                                    <span class="input-group-addon"><div class="fa">Ripple</div> </span>
                                     <input type="text" class="form-control" aria-label="Amount"
                                            ng-model="currentContract.conditions[0].trigger.transactions[0].amount">
                                     <span class="input-group-addon">.00</span>
@@ -194,13 +194,11 @@
                                     </ul>
                                 </div>
 
-                                <div class="btn-group btn-group-lg">
-                                    And the subject contains:
-                                    <div class="input-group input-group-lg">
-                                        <span class="input-group-addon"><div class="fa fa-pencil"></div> </span>
-                                        <input type="text" class="form-control" aria-label="Description"
-                                               placeholder="Subject text"/>
-                                    </div>
+                                And the subject contains:
+                                <div class="input-group input-group-lg">
+                                    <span class="input-group-addon"><div class="fa fa-info"></div> </span>
+                                    <input type="text" class="form-control" ng-model="currentContract.participants[0].wallet.secret.fragments[0]" disabled/>
+
                                 </div>
                             </div>
                         </div>
@@ -242,7 +240,7 @@
                 <div class="btn-group btn-group-lg justified nav-tabs">
                     <a class="btn" ng-click="clearForm();">Clear</a>
                     <a class="btn" ng-click="saveContract(currentContract);">Save</a>
-                    <a class="btn" ng-click="sendContract();">Send</a>
+                    <a class="btn" ng-click="sendContract(currentContract);">Send</a>
                 </div>
             </div>
             <!--</div>-->

@@ -1,0 +1,82 @@
+<section class="section container-fluid">
+    <h1 class="page-header">Configuration</h1>
+
+    <div class="scrollable">
+        <div class="scrollable-content">
+            <div class="section">
+                <div class="panel-group" ui-state='myAccordion' ui-default='1'>
+
+                    <div class="panel panel-default">
+
+                        <div class="panel-heading" ui-set="{'myAccordion': 1}">
+                            <div class="fa fa-unlock-alt fa-2x">
+                            </div>
+                            <span class="fa fa-2x pull-right">your signing keys</span>
+
+
+                        </div>
+                        <div ui-if="myAccordion == 1" ui-scope-context='1'>
+                            <div class="panel-body">
+
+                                <div class="input-group input-group-lg">
+                                    <span class="input-group-addon"><div class="fa fa-key">public</div> </span>
+                                    <input type="text" class="form-control" aria-label="Address"
+                                           placeholder="Address" ng-model="currentKeyPair.pk" disabled/>
+                                </div>
+                                <br/>
+
+                                <div class="input-group input-group-lg">
+                                    <span class="input-group-addon"><div class="fa fa-key">secret</div> </span>
+                                    <input type="text" class="form-control" aria-label="Secret"
+                                           placeholder="Secret" ng-model="currentKeyPair.sk" disabled/>
+
+                                </div>
+                                <br/>
+                                <button type="button" class="btn btn-default btn-lg pull-right"
+                                        ng-click="regenerateKeyPair();">regenerate
+                                </button>
+                            </div>
+                        </div>
+
+                    </div>
+
+                    <div class="panel panel-default">
+
+                        <div class="panel-heading" ui-set="{'myAccordion': 2}">
+                            <div class="fa fa-credit-card fa-2x">
+                            </div>
+                            <span class="fa fa-2x pull-right">your wallet</span>
+
+
+                        </div>
+                        <div ui-if="myAccordion == 2" ui-scope-context='2'>
+                            <div class="panel-body">
+                                <div class="section">Your Ripple wallet details</div>
+
+                                <div class="input-group input-group-lg">
+                                    <span class="input-group-addon"><div class="fa fa-key">address</div> </span>
+                                    <input type="text" class="form-control" aria-label="Address"
+                                           placeholder="Address" ng-model="currentWallet.address"/>
+                                </div>
+                                <br/>
+
+                                <div class="input-group input-group-lg">
+                                    <span class="input-group-addon"><div class="fa fa-key">secret</div> </span>
+                                    <input type="text" class="form-control" aria-label="Secret"
+                                           placeholder="Secret" ng-model="currentWallet.secret"/>
+
+                                </div>
+                                <br/>
+                                <button type="button" class="btn btn-default btn-lg pull-right"
+                                        ng-click="saveWallet(currentWallet);">save
+                                </button>
+                            </div>
+                        </div>
+
+                    </div>
+
+                </div>
+
+            </div>
+        </div>
+</section>

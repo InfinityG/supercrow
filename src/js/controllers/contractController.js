@@ -1,31 +1,11 @@
 (function () {
 
-    var injectParams = ['$scope', '$routeParams', '$window', 'localStorageService'];
+    var injectParams = ['$scope', '$routeParams', '$window', 'contractService', 'contactService', 'walletService', 'keyService'];
 
-    var ContractsController = function ($scope, $routeParams, $window, localStorageService) {
+    var ContractsController = function ($scope, $routeParams, $window, contractService, contactService, walletService, keyService) {
 
         $scope.cannedReasons = ['Work Done', 'Goal Achieved', 'Goods Received', 'Recognition', 'Occasion/event'];
 
-        $scope.cannedContacts = [
-            {
-                id: 1,
-                name: 'Shaun Conway',
-                email: 'shaun@resultslab.co',
-                publicKey: ''
-            },
-            {
-                id: 2,
-                name: 'Sam Surka',
-                email: 'sam@resultslab.co',
-                publicKey: ''
-            },
-            {
-                id: 3,
-                name: 'Grant Pidwell',
-                email: 'grantpidwell@infinity-g.com',
-                publicKey: ''
-            }
-        ];
         $scope.contacts = null;
         $scope.currentReceiver = null;
 
@@ -35,164 +15,65 @@
         $scope.contracts = null;
         $scope.currentContract = null;
 
+        $scope.currentSharedSecret = null;
+
         function init() {
             var contractId = ($routeParams.contractId) ? parseInt($routeParams.contractId) : 0;
             loadData(contractId);
         }
 
-        function loadData(contractId){
-            $scope.contacts = getContacts();
-            $scope.contracts = getContracts();
+        function loadData(contractId) {
+            //populate lists
+            $scope.contacts = contactService.getContacts();
+            $scope.contracts = contractService.getContracts();
 
-            if(contractId > 0){
+            if (contractId > 0) {
                 //get the current contract
-                $scope.currentContract = getContract(contractId)
+                $scope.currentContract = contractService.getContract(contractId);
 
                 //get the current receiver and oracle
                 var receiverId = $scope.currentContract.participants[1].external_id;
                 var oracleId = $scope.currentContract.participants[2].external_id;
 
-                for(var x=0; x<$scope.contacts.length; x++){
-                    if($scope.contacts[x].id == receiverId)
+                for (var x = 0; x < $scope.contacts.length; x++) {
+                    if ($scope.contacts[x].id == receiverId)
                         $scope.currentReceiver = $scope.contacts[x];
-                    if($scope.contacts[x].id == oracleId)
+                    if ($scope.contacts[x].id == oracleId)
                         $scope.currentOracle = $scope.contacts[x];
                 }
-            }else{
+            } else {
+                //new contract
+                $scope.currentSharedSecret = getSharedSecret();
                 $scope.currentContract = getContractTemplate();
                 $scope.currentReceiver = null;
                 $scope.currentOracle = null;
             }
         }
 
-        function getContracts() {
-            return localStorageService.getContracts();
+        function getSharedSecret() {
+            var wallet = walletService.getWallet();
+            return wallet != null ? keyService.getSplitWalletSecret(wallet) : null;
         }
 
-        function saveContract(contract) {
-            try{
-                localStorageService.saveContract(contract);
-                loadData(0);
-            }catch(e) {
-                $window.alert(e);
-            }
+        function getContractTemplate() {
+            var creatorPublicSigningKey = keyService.getSigningKeyPair().pk;
+            var creatorWalletAddress = walletService.getWallet().address;
+            var creatorSsKeyFragment = $scope.currentSharedSecret[0];
+            return contractService.getContractTemplate(creatorPublicSigningKey, creatorWalletAddress, creatorSsKeyFragment);
         }
 
-        function getContract(id) {
-            return localStorageService.getContract(id);
-        }
-
-        function deleteContract(id) {
-            localStorageService.deleteContract(id);
-        }
-
-        function getContact(id) {
-            for (var i = 0; i < $scope.contacts.length; i++) {
-                if ($scope.contacts[i].id == id)
-                    return $scope.contacts[id];
-            }
-        }
-
-        function getContacts() {
-            var result = localStorageService.getContacts();
-
-            if (result == null) {
-                localStorageService.saveContacts($scope.cannedContacts);
-                result = localStorageService.getContacts();
-            }
-
-            return result;
-        }
-
-        function getOracles() {
-            var oracleIds = localStorageService.getOracles();
-            var result = [];
-
-            for(var i=0; i<oracleIds.length; i++){
-                var contacts = $scope.getContacts();
-                for(var x=0; x<contacts.length; x++){
-                    if(contacts[x].id == oracleIds[i])
-                    result.push(contacts[x]);
-                }
-            }
-
-            return result;
-        }
-
-        function getContractTemplate(){
-            return {
-                id: 0,
-                name: '',
-                description: '',
-                expires: '',
-                participants: [
-                    {
-                        external_id: 1,
-                        public_key: '',
-                        roles: ['creator', 'sender'],
-                        wallet: {
-                            address: '',
-                            destination_tag: '',
-                            secret: {
-                                fragments: [],
-                                threshold: 2
-                            }
-                        }
-                    },
-                    {
-                        external_id: 2,
-                        public_key: '',
-                        roles: ['receiver'],
-                        wallet: {
-                            address: '',
-                            destination_tag: '',
-                            secret: null
-                        }
-                    },
-                    {
-                        external_id: 3,
-                        public_key: '',
-                        roles: ['oracle'],
-                        wallet: null
-                    }
-                ],
-                conditions: [
-                    {
-                        name: '',
-                        description: '',
-                        expires: '',
-                        sequence_number: 1,
-                        signatures: {
-                            participant_external_id: 3,
-                            type: 'ss_key',
-                            delegated_by_external_id: 1
-                        },
-                        trigger: {
-                            transactions: [
-                                {
-                                    "from_participant_external_id": 1,
-                                    "to_participant_external_id": 2,
-                                    "amount": 0,
-                                    "currency": ''
-                                }
-                            ]
-                        }
-                    }
-                ],
-                signatures: [
-                    {
-                        participant_external_id: 1,
-                        type: 'ecdsa',
-                        value: '',
-                        digest: ''
-                    }
-                ]
-            };
+        function setUnixDate(contract){
+            var dateArr = contract.expires.split('/');
+            var unixExpiry = new Date(dateArr[2], dateArr[1], dateArr[0]).getTime() / 1000;
+            contract.expires = unixExpiry;
+            contract.conditions[0].expires = unixExpiry;
         }
 
         $scope.oracleSelected = function (oracle) {
             $scope.currentOracle = oracle;
             $scope.currentContract.participants[2].external_id = oracle.id;
+            $scope.currentContract.participants[2].wallet.address = oracle.walletAddress;
+            $scope.currentContract.participants[2].public_key = oracle.publicKey;
         };
 
         $scope.reasonSelected = function (reason) {
@@ -207,14 +88,30 @@
         $scope.receiverSelected = function (contact) {
             $scope.currentReceiver = contact;
             $scope.currentContract.participants[1].external_id = contact.id;
-            $scope.currentContract.participants[1].wallet.address = contact.publicKey;
+            $scope.currentContract.participants[1].wallet.address = contact.walletAddress;
+            $scope.currentContract.participants[1].public_key = contact.publicKey;
         };
 
-        $scope.saveContract = function(contract){
-            saveContract(contract);
+        $scope.saveContract = function (contract) {
+            try {
+                setUnixDate(contract);
+                contractService.saveContract(contract);
+                keyService.saveSsPair($scope.currentSharedSecret);
+                //loadData(0);
+            } catch (e) {
+                $window.alert(e);
+            }
         };
 
-        $scope.clearForm = function(){
+        $scope.sendContract = function (contract) {
+            try {
+                contractService.sendContract(contract);
+            }catch(e){
+                $window.alert(e);
+            }
+        };
+
+        $scope.clearForm = function () {
             loadData(0);
         };
 
