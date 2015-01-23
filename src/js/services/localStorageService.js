@@ -185,7 +185,9 @@
         };
 
         factory.getWallet = function () {
-            return JSON.parse(localStorage.getItem('superCrow.wallet'));
+            var wallet = localStorage.getItem('superCrow.wallet');
+            if(wallet != null)
+                return JSON.parse(wallet);
         };
 
         factory.deleteWallet = function () {

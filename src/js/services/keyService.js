@@ -1,9 +1,13 @@
 (function () {
-    var injectParams = ['localStorageService', 'cryptoService'];
+    var injectParams = ['localStorageService'];
 
-    var keyFactory = function (localStorageService, cryptoService) {
+    var keyFactory = function (localStorageService) {
 
         var factory = {};
+
+        /*
+        WALLET SECRET KEY SHARING
+         */
 
         factory.getSplitWalletSecret = function (wallet) {
             var secret = wallet.secret;
@@ -15,18 +19,22 @@
             return result;
         };
 
+        factory.saveSsPair = function(ssPair){
+            localStorageService.saveSsPair(ssPair);
+        };
+
+        /*
+        ASYMMETRIC ENCRYPTION - ECDSA signature keys
+         */
+
         factory.generateSigningKeyPair = function () {
             // based on CryptocoinJS (http://cryptocoinjs.com/)
-            // using 'require' as these libraries are generated using Browserify and node libraries
-            var crypto = require('crypto');
-            var ecdsa = require('ecdsa');
+
             var sr = require('secure-random');
             var CoinKey = require('coinkey');
 
             var privateKey = sr.randomBuffer(32);
             var ck = new CoinKey(privateKey, true); // true => compressed public key / addresses
-
-            cryptoService.encryptTest();
 
             return {pk: ck.publicKey.toString('base64'), sk: privateKey.toString('base64')};
         };
@@ -35,8 +43,25 @@
           return localStorageService.getKeyPair();
         };
 
-        factory.saveSsPair = function(ssPair){
-            localStorageService.saveSsPair(ssPair);
+        /*
+        SYMMETRIC ENCRYPTION - AES key generation
+         */
+
+        factory.generateAESKey = function(password, salt){
+            // use pbkdf2 to convert variable password length to 256 bit hash,
+            // split into 8 bytes of 32 bits each
+            var pbkdf2 = require('pbkdf2-sha256');
+            var buffer = pbkdf2(password, salt, 1, 8);
+            var hash = buffer.toString();
+            return factory.textToIntArray(hash);
+        };
+
+        factory.textToIntArray = function (s) {
+            var ua = [];
+            for (var i = 0; i < s.length; i++) {
+                ua[i] = s.charCodeAt(i);
+            }
+            return ua;
         };
 
         return factory;

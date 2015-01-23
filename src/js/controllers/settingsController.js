@@ -1,8 +1,8 @@
 (function () {
 
-    var injectParams = ['$scope', '$routeParams', '$window', 'localStorageService', 'keyService'];
+    var injectParams = ['$scope', '$routeParams', '$window', 'localStorageService', 'keyService', 'cryptoService'];
 
-    var SettingsController = function ($scope, $routeParams, $window, localStorageService, keyService) {
+    var SettingsController = function ($scope, $routeParams, $window, localStorageService, keyService, cryptoService) {
 
         $scope.currentKeyPair = null;
         $scope.currentWallet = null;
@@ -33,8 +33,14 @@
 
         $scope.regenerateKeyPair = function () {
             var pair = keyService.generateSigningKeyPair();
-            localStorageService.saveKeyPair(pair);
 
+            //encrypt the secret key
+            var encSecret = cryptoService.encryptString(pair.sk);
+            pair.sk = encSecret;
+
+            //save the pair
+            localStorageService.saveKeyPair(pair);
+            
             $scope.currentKeyPair = pair;
         };
 
