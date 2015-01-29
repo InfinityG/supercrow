@@ -1,13 +1,19 @@
 (function () {
 
-    var injectParams = ['$scope', '$routeParams', '$window', 'localStorageService', 'keyService', 'cryptoService'];
+    var injectParams = ['$scope', '$location', '$routeParams', '$window', 'tokenService', 'localStorageService',
+                            'keyService', 'cryptoService'];
 
-    var SettingsController = function ($scope, $routeParams, $window, localStorageService, keyService, cryptoService) {
+    var SettingsController = function ($scope, $location, $routeParams, $window, tokenService, localStorageService,
+                                            keyService, cryptoService) {
 
         $scope.currentKeyPair = null;
         $scope.currentWallet = null;
 
         function init() {
+            var authToken = tokenService.getToken();
+            if(authToken == null || authToken == '')
+                $location.path('/login');
+
             loadData();
         }
 

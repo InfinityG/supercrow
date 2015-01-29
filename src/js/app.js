@@ -1,10 +1,11 @@
-angular.module('superCrow', [
-    'ngRoute',
-    'mobile-angular-ui',
-    'superCrow.controllers.Main'
-])
+(function () {
+    var app = angular.module('superCrow', ['ngRoute', 'mobile-angular-ui']);
 
-    .config(function ($routeProvider, $httpProvider) {
+    app.config(function ($routeProvider, $httpProvider) {
+
+        //authentication interceptor (http://beletsky.net/2013/11/simple-authentication-in-angular-dot-js-app.html)
+        $httpProvider.interceptors.push('httpInterceptor');
+
         $routeProvider
             .when('/contract/:contractId?', {
                 controller: 'ContractsController',
@@ -20,8 +21,21 @@ angular.module('superCrow', [
                 controller: 'SettingsController',
                 templateUrl: 'settings.html',
                 reloadOnSearch: false
-            });
-
-        $httpProvider.defaults.headers.common['Authorization'] = '7b2ebe64dc9149ac8a9e923bf2a6b233';
-        $httpProvider.defaults.withCredentials = true;
+            })
+            .when('/login/:exit?', {
+                controller: 'LoginController',
+                templateUrl: 'login.html',
+                reloadOnSearch: false
+            })
+            .when('/', {
+                controller: 'ContractsController',
+                templateUrl: 'contract.html',
+                reloadOnSearch: false
+            })
     });
+
+    app.run(function(initializationService){
+        initializationService.init();
+    });
+
+}());

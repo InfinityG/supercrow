@@ -9,8 +9,28 @@
 
         var serviceBase = config.apiHost, factory = {};
 
-        factory.getContracts = function () {
-            return localStorageService.getContracts();
+        factory.getSavedContracts = function () {
+            var contracts = localStorageService.getContracts();
+            var savedContracts = [];
+
+            for(var x=0; x<contracts.length; x++){
+                if(contracts[x].id == null || contracts[x].id == ''){
+                    savedContracts.push(contracts[x]);
+                }
+            }
+            return savedContracts;
+        };
+
+        factory.getSubmittedContracts = function () {
+            var contracts = localStorageService.getContracts();
+            var submittedContracts = [];
+
+            for(var x=0; x<contracts.length; x++){
+                if(contracts[x].id != null || contracts[x].id != ''){
+                    submittedContracts.push(contracts[x]);
+                }
+            }
+            return submittedContracts;
         };
 
         factory.saveContract = function (contract) {
@@ -22,14 +42,15 @@
             localStorageService.saveContract(contract);
         };
 
+        factory.deleteContract = function (contract) {
+            localStorageService.deleteContract(contract.external_id);
+        };
+
         factory.sendContract = function (contract) {
             return $http.post(serviceBase + '/contracts', contract, {'withCredentials': 'true'})
                 .then(function (response) {
                     var data = response.data;
                     factory.saveContract(data);
-                },
-                function (error) {
-                    $window.alert('An error occurred! Status:' + error.status + ', Message:' + JSON.stringify(error.data));
                 });
         };
 

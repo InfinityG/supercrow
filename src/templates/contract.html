@@ -237,8 +237,8 @@
             <div class="navbar navbar-app">
                 <!-- ... -->
 
-                <div class="btn-group btn-group-lg justified nav-tabs">
-                    <a class="btn" ng-click="clearForm();">Clear</a>
+                <div class="btn-group btn-group-lg justified nav-tabs" ng-show="currentContract.id == null;">
+                    <a class="btn" ng-click="deleteContract(currentContract);">Delete</a>
                     <a class="btn" ng-click="saveContract(currentContract);">Save</a>
                     <a class="btn" ng-click="sendContract(currentContract);">Send</a>
                 </div>

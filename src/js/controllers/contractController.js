@@ -1,8 +1,10 @@
 (function () {
 
-    var injectParams = ['$scope', '$routeParams', '$window', 'contractService', 'contactService', 'walletService', 'keyService'];
+    var injectParams = ['$scope', '$location', '$routeParams', '$window', 'tokenService', 'contractService',
+                            'contactService', 'walletService', 'keyService'];
 
-    var ContractsController = function ($scope, $routeParams, $window, contractService, contactService, walletService, keyService) {
+    var ContractsController = function ($scope, $location, $routeParams, $window, tokenService, contractService, contactService,
+                                        walletService, keyService) {
 
         $scope.cannedReasons = ['Work Done', 'Goal Achieved', 'Goods Received', 'Recognition', 'Occasion/event'];
 
@@ -12,12 +14,17 @@
         $scope.oracles = null;
         $scope.currentOracle = null;
 
-        $scope.contracts = null;
+        $scope.savedContracts = null;
+        $scope.submittedContracts = null;
         $scope.currentContract = null;
 
         $scope.currentSharedSecret = null;
 
         function init() {
+            var authToken = tokenService.getToken();
+            if(authToken == null || authToken == '')
+                $location.path('/login');
+
             var contractId = ($routeParams.contractId) ? parseInt($routeParams.contractId) : 0;
             loadData(contractId);
         }
@@ -25,7 +32,8 @@
         function loadData(contractId) {
             //populate lists
             $scope.contacts = contactService.getContacts();
-            $scope.contracts = contractService.getContracts();
+            $scope.savedContracts = contractService.getSavedContracts();
+            $scope.submittedContracts = contractService.getSubmittedContracts();
 
             if (contractId > 0) {
                 //get the current contract
@@ -111,8 +119,8 @@
             }
         };
 
-        $scope.clearForm = function () {
-            loadData(0);
+        $scope.deleteContract = function (contract) {
+            contractService.deleteContract(contract);
         };
 
         init();

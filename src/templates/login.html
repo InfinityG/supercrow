@@ -1,0 +1,97 @@
+<section class="section container-fluid">
+    <h1 class="page-header">Login</h1>
+
+    <div class="scrollable">
+        <div class="scrollable-content">
+            <div class="section">
+                <div class="panel-group" ui-state='myAccordion' ui-default='1'>
+
+                    <div class="panel panel-default">
+
+                        <div class="panel-heading" ui-set="{'myAccordion': 1}">
+                            <div class="fa fa-sign-in fa-2x">
+                            </div>
+                            <span class="fa fa-2x pull-right">login</span>
+
+
+                        </div>
+                        <div ui-if="myAccordion == 1" ui-scope-context='1'>
+                            <div class="panel-body">
+
+                                <div class="input-group input-group-lg">
+                                    <span class="input-group-addon"><div class="fa fa-envelope"></div> </span>
+                                    <input type="text" class="form-control" aria-label="Email"
+                                           placeholder="Email" ng-model="userName"/>
+                                </div>
+                                <br/>
+
+                                <div class="input-group input-group-lg">
+                                    <span class="input-group-addon"><div class="fa fa-key"></div> </span>
+                                    <input type="password" class="form-control" aria-label="Password"
+                                           placeholder="Password" ng-model="password"/>
+
+                                </div>
+                                <br/>
+                                <button type="button" class="btn btn-default btn-lg pull-right"
+                                        ng-click="login(userName, password);">login
+                                </button>
+                            </div>
+                        </div>
+
+
+                    </div>
+
+                    <div class="panel panel-default">
+                        <div class="panel-heading" ui-set="{'myAccordion': 2}">
+                            <div class="fa fa-pencil fa-2x">
+                            </div>
+                            <span class="fa fa-2x pull-right">register</span>
+
+
+                        </div>
+                        <div ui-if="myAccordion == 2" ui-scope-context='2'>
+                            <div class="panel-body">
+
+                                <div class="input-group input-group-lg">
+                                    <span class="input-group-addon"><div class="fa fa-user"></div> </span>
+                                    <input type="text" class="form-control" aria-label="FirstName"
+                                           placeholder="First Name" ng-model="firstName"/>
+                                </div>
+                                <br/>
+
+                                <div class="input-group input-group-lg">
+                                    <span class="input-group-addon"><div class="fa fa-user"></div> </span>
+                                    <input type="text" class="form-control" aria-label="LastName"
+                                           placeholder="Last Name" ng-model="lastName"/>
+
+                                </div>
+                                <br/>
+
+                                <div class="input-group input-group-lg">
+                                    <span class="input-group-addon"><div class="fa fa-envelope"></div> </span>
+                                    <input type="text" class="form-control" aria-label="Email"
+                                           placeholder="Email" ng-model="userName"/>
+
+                                </div>
+                                <br/>
+
+                                <div class="input-group input-group-lg">
+                                    <span class="input-group-addon"><div class="fa fa-key"></div> </span>
+                                    <input type="password" class="form-control" aria-label="Password"
+                                           placeholder="Password" ng-model="password"/>
+
+                                </div>
+                                <br/>
+                                <button type="button" class="btn btn-default btn-lg pull-right"
+                                        ng-click="register(firstName, lastName, userName, password);">register
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+
+                </div>
+
+            </div>
+        </div>
+    </div>
+</section>

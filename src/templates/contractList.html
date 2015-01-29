@@ -39,7 +39,8 @@
                                         <span class="input-group-addon dropdown-toggle" ui-turn-on='contractDropdown'>
                                             <i class="fa fa-ellipsis-v"></i>
                                         </span>
-                                        <input type="text" class="form-control" placeholder="Select a contract" aria-label="Reason"
+                                        <input type="text" class="form-control" placeholder="Select a contract"
+                                               aria-label="Reason"
                                                ng-model="currentContract.name"/>
                                     </div>
 
@@ -51,7 +52,8 @@
                                         ui-state="contractDropdown"
                                         ui-turn-off="contractDropdown">
 
-                                        <li ng-repeat="contract in contracts" ng-click="contractSelected(contract);">
+                                        <li ng-repeat="contract in savedContracts"
+                                            ng-click="contractSelected(contract);">
                                             <a>{{contract.name}} - {{contract.description}}</a>
                                         </li>
                                     </ul>
@@ -73,12 +75,35 @@
 
                         <div ui-if="myAccordion == 2" ui-scope-context='2'>
                             <div class="panel-body">
+                                <div class="btn-group btn-group-lg">
 
+                                    <div class="input-group input-group-lg">
+                                        <span class="input-group-addon dropdown-toggle"
+                                              ui-turn-on='submittedContractDropdown'>
+                                            <i class="fa fa-ellipsis-v"></i>
+                                        </span>
+                                        <input type="text" class="form-control" placeholder="Select a contract"
+                                               aria-label="Reason"
+                                               ng-model="currentContract.name"/>
+                                    </div>
 
+                                    <ul class="dropdown-menu"
+                                        ui-outer-click="Ui.turnOff('submittedContractDropdown')"
+                                        ui-outer-click-if="Ui.active('submittedContractDropdown')"
+                                        role="menu"
+                                        ui-show="submittedContractDropdown"
+                                        ui-state="submittedContractDropdown"
+                                        ui-turn-off="submittedContractDropdown">
+
+                                        <li ng-repeat="contract in submittedContracts"
+                                            ng-click="contractSelected(contract);">
+                                            <a>{{contract.name}} - {{contract.description}}</a>
+                                        </li>
+                                    </ul>
+                                </div>
                             </div>
                         </div>
                     </div>
-
                 </div>
 
             </div>

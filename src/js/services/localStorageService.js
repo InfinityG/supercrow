@@ -69,6 +69,7 @@
 
         factory.deleteContract = function (external_id) {
             var contracts = factory.getContracts();
+            localStorage.removeItem('superCrow.contracts');
 
             for (var i = 0; i < contracts.length; i++) {
                 if (contracts[i].external_id == external_id) {
