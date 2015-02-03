@@ -14,11 +14,13 @@
             return $http.post(serviceBase + '/users', userData, {'withCredentials': 'false'})
                 .then(function (response) {
                     var data = response.data;
-                    sessionStorageService.saveAuthToken(data.token);
+                    sessionStorageService.saveAuthToken(data.id, data.token);
 
-                },
-                function (error) {
-                    $window.alert('An error occurred! Status:' + error.status + ', Message:' + JSON.stringify(error.data));
+                    $rootScope.$broadcast('contractEvent', {
+                        type: 'Success',
+                        status: response.status,
+                        message: 'User successfully registered!'
+                    });
                 });
         };
 

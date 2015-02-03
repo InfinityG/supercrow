@@ -3,18 +3,23 @@
  */
 (function () {
 
-    var injectParams = ['$http', '$window', 'config', 'localStorageService'];
+    var injectParams = ['$http', '$window', '$rootScope', 'config', 'localStorageService', 'sessionStorageService',
+        'keyService', 'walletService'];
 
-    var contractFactory = function ($http, $window, config, localStorageService) {
+    var contractFactory = function ($http, $window, $rootScope, config, localStorageService, sessionStorageService,
+                                    keyService, walletService) {
 
         var serviceBase = config.apiHost, factory = {};
 
         factory.getSavedContracts = function () {
             var contracts = localStorageService.getContracts();
+            var context = sessionStorageService.getAuthToken();
+
             var savedContracts = [];
 
-            for(var x=0; x<contracts.length; x++){
-                if(contracts[x].id == null || contracts[x].id == ''){
+            for (var x = 0; x < contracts.length; x++) {
+                if ((contracts[x].id == null || contracts[x].id == '') &&
+                    context.user_id == contracts[x].user_id) {
                     savedContracts.push(contracts[x]);
                 }
             }
@@ -23,10 +28,13 @@
 
         factory.getSubmittedContracts = function () {
             var contracts = localStorageService.getContracts();
+            var context = sessionStorageService.getAuthToken();
+
             var submittedContracts = [];
 
-            for(var x=0; x<contracts.length; x++){
-                if(contracts[x].id != null || contracts[x].id != ''){
+            for (var x = 0; x < contracts.length; x++) {
+                if ((contracts[x].id != null && contracts[x].id != '') &&
+                    context.user_id == contracts[x].user_id) {
                     submittedContracts.push(contracts[x]);
                 }
             }
@@ -35,31 +43,75 @@
 
         factory.saveContract = function (contract) {
             localStorageService.saveContract(contract);
+            $rootScope.$broadcast('contractEvent', {
+                type: 'Success',
+                status: 0,
+                message: "Contract '" + contract.name + "' saved"
+            });
         };
 
         factory.updateContract = function (contract) {
             localStorageService.getContract(contract.external_id);
             localStorageService.saveContract(contract);
+            $rootScope.$broadcast('contractEvent', {
+                type: 'Success',
+                status: 0,
+                message: "Contract '" + contract.name + "' updated'"
+            });
         };
 
         factory.deleteContract = function (contract) {
             localStorageService.deleteContract(contract.external_id);
+            $rootScope.$broadcast('contractEvent', {
+                type: 'Success',
+                status: 0,
+                message: "Contract '" + contract.name + "' deleted"
+            });
         };
 
         factory.sendContract = function (contract) {
-            return $http.post(serviceBase + '/contracts', contract, {'withCredentials': 'true'})
+            //generate a shared secret at the last minute and save it
+            var sharedSecret = getSharedSecret();
+            keyService.saveSsPair(sharedSecret);
+
+            //add a shared secret fragment to the contract
+            contract.participants[0].wallet.secret.fragments.push(sharedSecret[0]);
+
+            //update the date to unix format
+            setUnixDate(contract);
+
+            return $http.post(serviceBase + '/contracts', contract)
                 .then(function (response) {
-                    var data = response.data;
-                    factory.saveContract(data);
+                    localStorageService.saveContract(response.data);
+                    $rootScope.$broadcast('contractEvent', {
+                        type: 'Success',
+                        status: response.status,
+                        message: "Contract '" + contract.name + "' saved"
+                    });
                 });
         };
 
         factory.getContract = function (external_id) {
-            return localStorageService.getContract(external_id);
+            var requestedContract = localStorageService.getContract(external_id);
+
+            if (requestedContract != null) {
+                return requestedContract;
+            }
+
+            $rootScope.$broadcast('contractEvent', {
+                type: 'Error',
+                status: 0,
+                message: "Contract could not be found"
+            });
         };
 
-        factory.getContractTemplate = function (creatorPublicSigningKey, creatorWalletAddress, creatorSsKeyFragment) {
+        factory.getContractTemplate = function () {
+            var userId = sessionStorageService.getAuthToken().user_id;
+            var creatorPublicSigningKey = keyService.getSigningKeyPair().pk;
+            var creatorWalletAddress = walletService.getWallet().address;
+
             return {
+                user_id: userId,
                 external_id: 0,
                 name: '',
                 description: '',
@@ -73,7 +125,7 @@
                             address: creatorWalletAddress,
                             destination_tag: '',
                             secret: {
-                                fragments: [creatorSsKeyFragment],
+                                fragments: [],
                                 threshold: 2
                             }
                         }
@@ -115,7 +167,7 @@
                                 {
                                     "from_participant_external_id": 1,
                                     "to_participant_external_id": 2,
-                                    "amount": 0,
+                                    "amount": null,
                                     "currency": 'XRP'
                                 }
                             ]
@@ -132,6 +184,18 @@
                 ]
             };
         };
+
+        function getSharedSecret() {
+            var wallet = walletService.getWallet();
+            return wallet != null ? keyService.getSplitWalletSecret(wallet) : null;
+        }
+
+        function setUnixDate(contract) {
+            var dateArr = contract.expires.split('/');
+            var unixExpiry = new Date(dateArr[2], dateArr[1], dateArr[0]).getTime() / 1000;
+            contract.expires = unixExpiry;
+            contract.conditions[0].expires = unixExpiry;
+        }
 
         return factory;
     };

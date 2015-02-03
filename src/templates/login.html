@@ -6,6 +6,7 @@
             <div class="section">
                 <div class="panel-group" ui-state='myAccordion' ui-default='1'>
 
+
                     <div class="panel panel-default">
 
                         <div class="panel-heading" ui-set="{'myAccordion': 1}">
@@ -17,29 +18,41 @@
                         </div>
                         <div ui-if="myAccordion == 1" ui-scope-context='1'>
                             <div class="panel-body">
+                                <form name="loginForm" novalidate>
+                                    <div class="input-group input-group-lg">
+                                        <span class="input-group-addon fa fa-envelope"></span>
+                                        <input type="text" class="form-control" name="email" aria-label="Email"
+                                               placeholder="Email" ng-model="userName" required="true"/>
+                                    </div>
+                                    <span style="color:red"
+                                          ng-show="loginForm.email.$dirty && loginForm.email.$invalid">
+                                              Email is required!
+                                        </span>
+                                    <br/>
 
-                                <div class="input-group input-group-lg">
-                                    <span class="input-group-addon"><div class="fa fa-envelope"></div> </span>
-                                    <input type="text" class="form-control" aria-label="Email"
-                                           placeholder="Email" ng-model="userName"/>
-                                </div>
-                                <br/>
+                                    <div class="input-group input-group-lg">
+                                        <span class="input-group-addon fa fa-key"></span>
+                                        <input type="password" class="form-control" name="password"
+                                               aria-label="Password"
+                                               placeholder="Password" ng-model="password" required="true"/>
 
-                                <div class="input-group input-group-lg">
-                                    <span class="input-group-addon"><div class="fa fa-key"></div> </span>
-                                    <input type="password" class="form-control" aria-label="Password"
-                                           placeholder="Password" ng-model="password"/>
-
-                                </div>
-                                <br/>
-                                <button type="button" class="btn btn-default btn-lg pull-right"
-                                        ng-click="login(userName, password);">login
-                                </button>
+                                    </div>
+                                     <span style="color:red"
+                                           ng-show="loginForm.password.$dirty && loginForm.password.$invalid">
+                                              Password is required!
+                                        </span>
+                                    <br/>
+                                    <button type="button" ng-show="loginForm.$valid"
+                                            class="btn btn-default btn-lg pull-right"
+                                            ng-click="login(userName, password);">login
+                                    </button>
+                                </form>
                             </div>
                         </div>
 
 
                     </div>
+
 
                     <div class="panel panel-default">
                         <div class="panel-heading" ui-set="{'myAccordion': 2}">
@@ -52,39 +65,63 @@
                         <div ui-if="myAccordion == 2" ui-scope-context='2'>
                             <div class="panel-body">
 
-                                <div class="input-group input-group-lg">
-                                    <span class="input-group-addon"><div class="fa fa-user"></div> </span>
-                                    <input type="text" class="form-control" aria-label="FirstName"
-                                           placeholder="First Name" ng-model="firstName"/>
-                                </div>
-                                <br/>
+                                <form name="registrationForm">
+                                    <div class="input-group input-group-lg">
+                                        <span class="input-group-addon fa fa-user"></span>
+                                        <input type="text" class="form-control" name="firstName" aria-label="FirstName"
+                                               placeholder="First Name" ng-model="firstName"
+                                               ng-minlength="3" ng-maxlength="50" required="true"/>
+                                    </div>
+                                    <span style="color:red"
+                                          ng-show="registrationForm.firstName.$dirty && registrationForm.firstName.$invalid">
+                                              Invalid first name (min. 3 characters required)
+                                        </span>
+                                    <br/>
 
-                                <div class="input-group input-group-lg">
-                                    <span class="input-group-addon"><div class="fa fa-user"></div> </span>
-                                    <input type="text" class="form-control" aria-label="LastName"
-                                           placeholder="Last Name" ng-model="lastName"/>
+                                    <div class="input-group input-group-lg">
+                                        <span class="input-group-addon fa fa-user"></span>
+                                        <input type="text" class="form-control" aria-label="LastName" name="lastName"
+                                               placeholder="Last Name" ng-model="lastName" ng-minlength="3"
+                                               ng-maxlength="50"
+                                               required="true"/>
 
-                                </div>
-                                <br/>
+                                    </div>
+                                     <span style="color:red"
+                                           ng-show="registrationForm.lastName.$dirty && registrationForm.lastName.$invalid">
+                                              Invalid last name (min. 3 characters required)
+                                        </span>
+                                    <br/>
 
-                                <div class="input-group input-group-lg">
-                                    <span class="input-group-addon"><div class="fa fa-envelope"></div> </span>
-                                    <input type="text" class="form-control" aria-label="Email"
-                                           placeholder="Email" ng-model="userName"/>
+                                    <div class="input-group input-group-lg">
+                                        <span class="input-group-addon fa fa-envelope"></span>
+                                        <input type="email" class="form-control" aria-label="Email" name="userName"
+                                               placeholder="Email" ng-model="userName" required="true"/>
 
-                                </div>
-                                <br/>
+                                    </div>
+                                    <span style="color:red"
+                                          ng-show="registrationForm.userName.$dirty && registrationForm.userName.$invalid">
+                                              Invalid email
+                                        </span>
+                                    <br/>
 
-                                <div class="input-group input-group-lg">
-                                    <span class="input-group-addon"><div class="fa fa-key"></div> </span>
-                                    <input type="password" class="form-control" aria-label="Password"
-                                           placeholder="Password" ng-model="password"/>
+                                    <div class="input-group input-group-lg">
+                                        <span class="input-group-addon fa fa-key"></span>
+                                        <input type="password" class="form-control" aria-label="Password"
+                                               name="password"
+                                               placeholder="Password" ng-model="password" required="true"
+                                               ng-minlength="5" ng-maxlength="20"/>
 
-                                </div>
-                                <br/>
-                                <button type="button" class="btn btn-default btn-lg pull-right"
-                                        ng-click="register(firstName, lastName, userName, password);">register
-                                </button>
+                                    </div>
+                                     <span style="color:red"
+                                           ng-show="registrationForm.password.$dirty && registrationForm.password.$invalid">
+                                              Invalid password
+                                        </span>
+                                    <br/>
+                                    <button type="button" ng-show="registrationForm.$valid"
+                                            class="btn btn-default btn-lg pull-right"
+                                            ng-click="register(firstName, lastName, userName, password);">register
+                                    </button>
+                                </form>
                             </div>
                         </div>
                     </div>
@@ -94,4 +131,6 @@
             </div>
         </div>
     </div>
+
+    <modal show='false' redirect='true'></modal>
 </section>

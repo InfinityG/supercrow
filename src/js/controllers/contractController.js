@@ -1,10 +1,8 @@
 (function () {
 
-    var injectParams = ['$scope', '$location', '$routeParams', '$window', 'tokenService', 'contractService',
-                            'contactService', 'walletService', 'keyService'];
+    var injectParams = ['$scope', '$location', '$routeParams', '$window', 'tokenService', 'contractService', 'contactService'];
 
-    var ContractsController = function ($scope, $location, $routeParams, $window, tokenService, contractService, contactService,
-                                        walletService, keyService) {
+    var ContractsController = function ($scope, $location, $routeParams, $window, tokenService, contractService, contactService) {
 
         $scope.cannedReasons = ['Work Done', 'Goal Achieved', 'Goods Received', 'Recognition', 'Occasion/event'];
 
@@ -17,8 +15,6 @@
         $scope.savedContracts = null;
         $scope.submittedContracts = null;
         $scope.currentContract = null;
-
-        $scope.currentSharedSecret = null;
 
         function init() {
             var authToken = tokenService.getToken();
@@ -51,30 +47,14 @@
                 }
             } else {
                 //new contract
-                $scope.currentSharedSecret = getSharedSecret();
                 $scope.currentContract = getContractTemplate();
                 $scope.currentReceiver = null;
                 $scope.currentOracle = null;
             }
         }
 
-        function getSharedSecret() {
-            var wallet = walletService.getWallet();
-            return wallet != null ? keyService.getSplitWalletSecret(wallet) : null;
-        }
-
         function getContractTemplate() {
-            var creatorPublicSigningKey = keyService.getSigningKeyPair().pk;
-            var creatorWalletAddress = walletService.getWallet().address;
-            var creatorSsKeyFragment = $scope.currentSharedSecret[0];
-            return contractService.getContractTemplate(creatorPublicSigningKey, creatorWalletAddress, creatorSsKeyFragment);
-        }
-
-        function setUnixDate(contract){
-            var dateArr = contract.expires.split('/');
-            var unixExpiry = new Date(dateArr[2], dateArr[1], dateArr[0]).getTime() / 1000;
-            contract.expires = unixExpiry;
-            contract.conditions[0].expires = unixExpiry;
+            return contractService.getContractTemplate();
         }
 
         $scope.oracleSelected = function (oracle) {
@@ -102,10 +82,7 @@
 
         $scope.saveContract = function (contract) {
             try {
-                setUnixDate(contract);
                 contractService.saveContract(contract);
-                keyService.saveSsPair($scope.currentSharedSecret);
-                //loadData(0);
             } catch (e) {
                 $window.alert(e);
             }

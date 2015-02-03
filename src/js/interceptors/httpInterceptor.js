@@ -5,19 +5,26 @@
 
 (function () {
 
-    var injectParams = ['$q', '$window', '$location'];
+    var injectParams = ['$q', '$window', '$location', '$rootScope'];
 
-    var httpInterceptor = function ($q, $window, $location) {
+    var httpInterceptor = function ($q, $window, $location, $rootScope) {
 
         return {
             'response': function (response) {
-                // do something on success
                 return response;
             },
             'responseError': function (rejection) {
-                if(rejection.status === 401) {
-                    //todo: delete old tokens here!
-                    $location.path('/login');
+                switch(rejection.status){
+                    case 401:
+                        $rootScope.$broadcast('contractEvent', {type:'Error', status: rejection.status, message:rejection.data});
+                        $location.path('/login');
+                        break;
+                    case 0:
+                        $rootScope.$broadcast('contractEvent', {type:'Error', status: rejection.status, message:'No connection!'});
+                        break;
+                    default :
+                        $rootScope.$broadcast('contractEvent', {type:'Error', status:rejection.status, message:rejection.data});
+                        break;
                 }
 
                 return $q.reject(rejection);

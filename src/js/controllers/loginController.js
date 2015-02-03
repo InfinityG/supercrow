@@ -11,15 +11,15 @@
 
         function init(){
             if($routeParams.exit != null)
-                $scope.logout();
+                $scope.deleteToken();
         }
 
         $scope.login = function (userName, password) {
             tokenService.login(userName, password);
         };
 
-        $scope.logout = function () {
-            tokenService.logout();
+        $scope.deleteToken = function () {
+            tokenService.deleteToken();
         };
 
         $scope.register = function (firstName, lastName, userName, password) {

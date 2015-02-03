@@ -10,11 +10,11 @@
         var factory = {};
 
         factory.getAuthToken = function(){
-            return sessionStorage.getItem('superCrow.token');
+            return JSON.parse(sessionStorage.getItem('superCrow.token'));
         };
 
-        factory.saveAuthToken = function(token){
-            return sessionStorage.setItem('superCrow.token', token);
+        factory.saveAuthToken = function(user_id, token){
+            return sessionStorage.setItem('superCrow.token', JSON.stringify({user_id: user_id, token: token}));
         };
 
         factory.deleteAuthToken = function(){

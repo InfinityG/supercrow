@@ -12,16 +12,18 @@
     var initializationFactory = function ($http, sessionStorageService) {
         var factory = {};
 
-        factory.init = function(token){
-            factory.configureAuth(token);
+        factory.init = function(){
+            factory.configureAuth();
         };
 
-        factory.configureAuth = function(token){
+        factory.configureAuth = function(){
             // all http requests to the API will have this header
-            $http.defaults.headers.common['Authorization'] = token == null ? sessionStorageService.getAuthToken() : token;
-            $http.defaults.withCredentials = true;
+            var token = sessionStorageService.getAuthToken();
+            if(token != null) {
+                $http.defaults.headers.common['Authorization'] = token.token;
+                $http.defaults.withCredentials = true;
+            }
         };
-
 
         return factory;
     };

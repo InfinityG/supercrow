@@ -26,34 +26,23 @@
         factory.saveContract = function (contract) {
             var contracts = factory.getContracts();
 
-            //this has been sent to the API and we have received an id
-            //re-save with updated information from the API
-            if (contract.id != null && contract.id != '') {
+            if(contract.external_id != 0) {
                 for (var i = 0; i < contracts.length; i++) {
                     if (contracts[i].external_id == contract.external_id) {
                         contracts.splice(i, 1);
                         contracts.push(contract);
-                        localStorage.removeItem('superCrow.contracts');
-                        localStorage.setItem('superCrow.contracts', JSON.stringify(contracts));
                     }
                 }
-                return;
+            }else{
+                //this is a new contract - set the external_id
+                if (contracts.length > 0)
+                    contract.external_id = contracts[contracts.length - 1].external_id + 1;
+                else
+                    contract.external_id = 1;
+
+                contracts.push(contract);
             }
 
-            //check that a contract with the same name doesn't already exist
-            //for(var x=0; x<contracts.length; x++) {
-            //    if(contract.name == contracts[x].name){
-            //        throw 'A contract with this name already exists!';
-            //    }
-            //}
-
-            //this is a new contract - set the external_id
-            if (contracts.length > 0)
-                contract.external_id = contracts[contracts.length - 1].external_id + 1;
-            else
-                contract.external_id = 1;
-
-            contracts.push(contract);
             localStorage.removeItem('superCrow.contracts');
             localStorage.setItem('superCrow.contracts', JSON.stringify(contracts));
         };

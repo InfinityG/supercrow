@@ -3,9 +3,9 @@
  */
 (function () {
 
-    var injectParams = ['$http', '$window', '$location', 'config', 'sessionStorageService'];
+    var injectParams = ['$http', '$window', '$location', 'config', 'sessionStorageService', 'initializationService'];
 
-    var tokenFactory = function ($http, $window, $location, config, sessionStorageService) {
+    var tokenFactory = function ($http, $window, $location, config, sessionStorageService, initializationService) {
 
         var serviceBase = config.apiHost, factory = {};
 
@@ -13,7 +13,7 @@
             return sessionStorageService.getAuthToken();
         };
 
-        factory.logout = function(){
+        factory.deleteToken = function(){
             return sessionStorageService.deleteAuthToken();
         };
 
@@ -22,14 +22,14 @@
             return $http.post(serviceBase + '/tokens', userData, {'withCredentials': 'false'})
                 .then(function (response) {
                     var data = response.data;
-                    sessionStorageService.saveAuthToken(data.token);
+                    sessionStorageService.saveAuthToken(data.user_id, data.token);
+                    //call init on initializationService to set default auth header on http requests
+                    initializationService.init();
                     $location.path('/');
-                },
-                function (error) {
-                    $window.alert('An error occurred! Status:' + error.status + ', Message:' + JSON.stringify(error.data));
                 });
+            //note: errors handled by httpInterceptor
         };
-
+z
         return factory;
     };
 
