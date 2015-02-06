@@ -1,31 +1,26 @@
 (function () {
 
-    var injectParams = ['$scope', '$location', '$routeParams', '$window', 'tokenService', 'localStorageService',
-                            'keyService', 'cryptoService'];
+    var injectParams = ['$scope', '$location', '$routeParams', '$window', 'tokenService', 'keyService', 'cryptoService', 'walletService'];
 
-    var SettingsController = function ($scope, $location, $routeParams, $window, tokenService, localStorageService,
-                                            keyService, cryptoService) {
+    var SettingsController = function ($scope, $location, $routeParams, $window, tokenService, keyService, cryptoService, walletService) {
 
         $scope.currentKeyPair = null;
         $scope.currentWallet = null;
 
         function init() {
-            var authToken = tokenService.getToken();
-            if(authToken == null || authToken == '')
-                $location.path('/login');
+            var context = tokenService.getContext();
 
-            loadData();
+            if(context == null || context == '')
+                $location.path('/login');
+            else {
+                loadData();
+            }
         }
 
         function loadData() {
-            $scope.currentKeyPair = localStorageService.getKeyPair();
-
-            var wallet = localStorageService.getWallet();
-
-            if (wallet == null)
-                $scope.currentWallet = getWalletTemplate();
-            else
-                $scope.currentWallet = localStorageService.getWallet();
+            $scope.currentKeyPair = keyService.getSigningKeyPair();
+            var wallet = walletService.getWallet();
+            $scope.currentWallet = wallet == null ? getWalletTemplate() : wallet;
         }
 
         function getWalletTemplate() {
@@ -45,15 +40,14 @@
             pair.sk = encSecret;
 
             //save the pair
-            localStorageService.saveKeyPair(pair);
+            keyService.saveSigningKeyPair(pair);
             
             $scope.currentKeyPair = pair;
         };
 
         $scope.saveWallet = function (wallet) {
-
             try {
-                localStorageService.saveWallet(wallet);
+                walletService.saveWallet(wallet);
                 loadData(0);
             } catch (e) {
                 $window.alert(e);

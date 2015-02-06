@@ -17,12 +17,14 @@
         $scope.currentContract = null;
 
         function init() {
-            var authToken = tokenService.getToken();
-            if(authToken == null || authToken == '')
-                $location.path('/login');
+            var context = tokenService.getContext();
 
-            var contractId = ($routeParams.contractId) ? parseInt($routeParams.contractId) : 0;
-            loadData(contractId);
+            if(context == null || context == '') {
+                $location.path('/login');
+            }else {
+                var contractId = ($routeParams.contractId) ? parseInt($routeParams.contractId) : 0;
+                loadData(contractId);
+            }
         }
 
         function loadData(contractId) {
@@ -53,10 +55,6 @@
             }
         }
 
-        function getContractTemplate() {
-            return contractService.getContractTemplate();
-        }
-
         $scope.oracleSelected = function (oracle) {
             $scope.currentOracle = oracle;
             $scope.currentContract.participants[2].external_id = oracle.id;
@@ -79,6 +77,10 @@
             $scope.currentContract.participants[1].wallet.address = contact.walletAddress;
             $scope.currentContract.participants[1].public_key = contact.publicKey;
         };
+
+        function getContractTemplate() {
+            return contractService.getContractTemplate();
+        }
 
         $scope.saveContract = function (contract) {
             try {

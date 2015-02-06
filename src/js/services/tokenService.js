@@ -3,33 +3,37 @@
  */
 (function () {
 
-    var injectParams = ['$http', '$window', '$location', 'config', 'sessionStorageService', 'initializationService'];
+    var injectParams = ['$http', '$location', '$rootScope', 'config', 'keyService', 'sessionStorageService'];
 
-    var tokenFactory = function ($http, $window, $location, config, sessionStorageService, initializationService) {
+    var tokenFactory = function ($http, $location, $rootScope, config, keyService, sessionStorageService) {
 
-        var serviceBase = config.apiHost, factory = {};
+        var serviceBase = config.apiHost, nacl = config.nacl, factory = {};
 
-        factory.getToken = function(){
+        factory.getContext = function () {
             return sessionStorageService.getAuthToken();
         };
 
-        factory.deleteToken = function(){
+        factory.deleteToken = function () {
             return sessionStorageService.deleteAuthToken();
         };
 
-        factory.login = function(username, password){
-            var userData = {username : username, password: password};
+        factory.login = function (username, password) {
+            var userData = {username: username, password: password};
+
             return $http.post(serviceBase + '/tokens', userData, {'withCredentials': 'false'})
                 .then(function (response) {
                     var data = response.data;
+
                     sessionStorageService.saveAuthToken(data.user_id, data.token);
-                    //call init on initializationService to set default auth header on http requests
-                    initializationService.init();
+                    var cryptoKey = keyService.generateAESKey(userData.password, nacl);
+
+                    $rootScope.$broadcast('loginEvent', {key: cryptoKey});
+
                     $location.path('/');
                 });
             //note: errors handled by httpInterceptor
         };
-z
+
         return factory;
     };
 

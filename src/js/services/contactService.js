@@ -3,18 +3,19 @@
  */
 (function () {
 
-    var injectParams = ['$http', 'localStorageService'];
+    var injectParams = ['$http', 'tokenService', 'localStorageService'];
 
-    var contactFactory = function ($http, localStorageService) {
+    var contactFactory = function ($http, tokenService, localStorageService) {
 
         var factory = {};
 
         factory.getContacts= function() {
-            var result = localStorageService.getContacts();
+            var userId = tokenService.getContext().userId;
+            var result = localStorageService.getContacts(userId);
 
-            if (result == null) {
+            if (result == null || result == []) {
                 result = factory.getCannedContacts();
-                localStorageService.saveContacts(result);
+                localStorageService.saveContacts(userId, result);
             }
 
             return result;

@@ -10,11 +10,9 @@
          CONTRACTS
          */
 
-        factory.getContracts = function () {
-            var result = JSON.parse(localStorage.getItem('superCrow.contracts'));
-
-            if (result == null)
-                result = [];
+        factory.getContracts = function (userId) {
+            var blob = factory.getBlob(userId);
+            var result = blob.contracts;
 
             result.sort(function (a, b) {
                 return a.external_id - b.external_id;
@@ -23,8 +21,9 @@
             return result;
         };
 
-        factory.saveContract = function (contract) {
-            var contracts = factory.getContracts();
+        factory.saveContract = function (userId, contract) {
+            var blob = factory.getBlob(userId);
+            var contracts = blob.contracts;
 
             if(contract.external_id != 0) {
                 for (var i = 0; i < contracts.length; i++) {
@@ -43,45 +42,46 @@
                 contracts.push(contract);
             }
 
-            localStorage.removeItem('superCrow.contracts');
-            localStorage.setItem('superCrow.contracts', JSON.stringify(contracts));
+            factory.saveBlob(blob);
         };
 
-        factory.getContract = function (external_id) {
-            var contracts = factory.getContracts();
+        factory.getContract = function (userId, contractExternalId) {
+            var contracts = factory.getContracts(userId);
 
             for (var i = 0; i < contracts.length; i++) {
-                if (contracts[i].external_id == external_id)
+                if (contracts[i].external_id == contractExternalId)
                     return contracts[i];
             }
         };
 
-        factory.deleteContract = function (external_id) {
-            var contracts = factory.getContracts();
-            localStorage.removeItem('superCrow.contracts');
+        factory.deleteContract = function (userId, contractExternalId) {
+            var blob = factory.getBlob(userId);
+            var contracts = blob.contracts;
 
             for (var i = 0; i < contracts.length; i++) {
-                if (contracts[i].external_id == external_id) {
+                if (contracts[i].external_id == contractExternalId) {
                     contracts.splice(i, 1);
-                    localStorage.setItem('superCrow.contracts', JSON.stringify(contracts));
                 }
             }
+
+            factory.saveBlob(blob);
         };
 
         /*
          ORACLES - this is simply a list of ids that refer to contact ids
          */
 
-        factory.getOracles = function () {
-            return JSON.parse(localStorage.getItem('superCrow.oracles'));
-        };
-
-        factory.saveOracle = function (oracle) {
-            var oracles = factory.getOracles();
-            oracles.push(oracle);
-            localStorage.removeItem('superCrow.oracles');
-            localStorage.setItem('superCrow.oracles', JSON.stringify(oracles));
-        };
+        //factory.getOracles = function (userId) {
+        //return JSON.parse(localStorage.getItem('superCrow.oracles'));
+        //
+        //};
+        //
+        //factory.saveOracle = function (oracle) {
+        //    var oracles = factory.getOracles();
+        //    oracles.push(oracle);
+        //    localStorage.removeItem('superCrow.oracles');
+        //    localStorage.setItem('superCrow.oracles', JSON.stringify(oracles));
+        //};
 
         //factory.getOracle = function(id) {
         //    var oracles = self.getOracles();
@@ -92,39 +92,41 @@
         //    }
         //};
 
-        factory.deleteOracle = function (id) {
-            var oracles = factory.getOracles();
-
-            for (var i = 0; i < oracles.length; i++) {
-                if (oracles[i] == id) {
-                    oracles.splice(i, 1);
-                    localStorage.removeItem('superCrow.oracles');
-                    localStorage.setItem('superCrow.oracles', JSON.stringify(oracles));
-                }
-            }
-        };
+        //factory.deleteOracle = function (id) {
+        //    var oracles = factory.getOracles();
+        //
+        //    for (var i = 0; i < oracles.length; i++) {
+        //        if (oracles[i] == id) {
+        //            oracles.splice(i, 1);
+        //            localStorage.removeItem('superCrow.oracles');
+        //            localStorage.setItem('superCrow.oracles', JSON.stringify(oracles));
+        //        }
+        //    }
+        //};
 
         /*
          CONTACTS
          */
 
-        factory.getContacts = function () {
-            return JSON.parse(localStorage.getItem('superCrow.contacts'));
+        factory.getContacts = function (userId) {
+            var blob = factory.getBlob(userId);
+            return blob.contacts;
         };
 
-        factory.saveContacts = function (contacts) {
-            localStorage.removeItem('superCrow.contacts');
-            return localStorage.setItem('superCrow.contacts', JSON.stringify(contacts));
+        factory.saveContacts = function (userId, contacts) {
+            var blob = factory.getBlob(userId);
+            blob.contacts = contacts;
+            factory.saveBlob(blob);
         };
 
-        factory.saveContact = function (contact) {
-            var contacts = factory.getContacts();
-            contacts.push(contact);
-            localStorage.setItem('superCrow.contacts', JSON.stringify(contacts));
+        factory.saveContact = function (userId, contact) {
+            var blob = factory.getBlob(userId);
+            blob.contacts.push(contact);
+            factory.saveBlob(blob);
         };
 
-        factory.getContact = function (id) {
-            var contacts = factory.getContacts();
+        factory.getContact = function (userId, id) {
+            var contacts = factory.getContacts(userId);
 
             for (var i = 0; i < contacts.length; i++) {
                 if (contacts[i].id == id)
@@ -132,93 +134,152 @@
             }
         };
 
-        factory.deleteContact = function (id) {
-            var contacts = factory.getContacts();
+        factory.deleteContact = function (userId, id) {
+            var blob = factory.getBlob(userId);
+            var contacts = blob.contacts;
 
             for (var i = 0; i < contacts.length; i++) {
                 if (contacts[i].id == id) {
                     contacts.splice(i, 1);
-                    self.saveContacts(contacts);
                 }
             }
+
+            factory.saveBlob(blob);
         };
 
         /*
          KEYS
          */
 
-        factory.saveKeyPair = function (keyPair) {
-            var currentPair = factory.getKeyPair();
-            if (currentPair != null)
-                factory.deleteKeyPair();
+        factory.saveKeyPair = function (userId, keyPair) {
+            var blob = factory.getBlob(userId);
+            blob.keys = keyPair;
 
-            localStorage.setItem('superCrow.keys', JSON.stringify(keyPair));
+            factory.saveBlob(blob);
         };
 
-        factory.getKeyPair = function () {
-            return JSON.parse(localStorage.getItem('superCrow.keys'));
+        factory.getKeyPair = function (userId) {
+            var blob = factory.getBlob(userId);
+            return blob.keys;
         };
 
-        factory.deleteKeyPair = function () {
-            localStorage.removeItem('superCrow.keys');
+        factory.deleteKeyPair = function (userId) {
+            var blob = factory.getBlob(userId);
+            blob.keys = {};
+            factory.saveBlob(blob);
         };
 
         /*
          WALLET
          */
-        factory.saveWallet = function (wallet) {
-            var currentWallet = factory.getWallet();
-            if (currentWallet != null)
-                factory.deleteWallet();
-
-            localStorage.setItem('superCrow.wallet', JSON.stringify(wallet));
+        factory.saveWallet = function (userId, wallet) {
+            var blob = factory.getBlob(userId);
+            blob.wallet = wallet;
+            factory.saveBlob(blob);
         };
 
-        factory.getWallet = function () {
-            var wallet = localStorage.getItem('superCrow.wallet');
-            if(wallet != null)
-                return JSON.parse(wallet);
+        factory.getWallet = function (userId) {
+            var blob = factory.getBlob(userId);
+            return blob.wallet;
         };
 
-        factory.deleteWallet = function () {
-            localStorage.removeItem('superCrow.wallet');
+        factory.deleteWallet = function (userId) {
+            var blob = factory.getBlob(userId);
+            blob.wallet = {};
+            factory.saveBlob(blob);
         };
 
         /*
          SS_KEYS
          */
-        factory.saveSsPair = function (ssPair) {
-            var pairs = factory.getSsPairs();
-            if (pairs == null)
-                pairs = {};
-
-            pairs[ssPair[0]] = ssPair[1];   //add a new pair to the pairs hash, with the first ss_key in the pair as the key
-            factory.deleteSsPairs();
-            localStorage.setItem('superCrow.ssKeys', JSON.stringify(pairs));
+        factory.saveSsPair = function (userId, ssPair) {
+            //adds a ssPair to a user
+            var blob = factory.getBlob(userId);
+            blob.ssKeys[ssPair[0]] = ssPair[1];
+            factory.saveBlob(blob);
         };
 
-        factory.saveSsPairs = function (ssPairs) {
-            localStorage.setItem('superCrow.ssKeys', JSON.stringify(ssPairs));
+        factory.saveSsPairs = function (userId, ssPairs) {
+            //replaces all ssPairs for a user
+            var blob = factory.getBlob(userId);
+            blob.ssKeys = ssPairs;
+            factory.saveBlob(blob);
         };
 
-        factory.getSsPairs = function () {
-            return JSON.parse(localStorage.getItem('superCrow.ssKeys'));
+        factory.getSsPairs = function (userId) {
+            var blob = factory.getBlob(userId);
+            return blob.ssKeys;
         };
 
-        factory.deleteSsPair = function (ssPair) {
-            var pairs = factory.getSsPairs();
-            if (pairs[ssPair[0]] != null) {
-                factory.deleteSsPairs();
-                delete pairs[ssPair[0]];
+        factory.deleteSsPair = function (userId, ssPair) {
+            var blob = factory.getBlob(userId);
+            delete blob.ssKeys[ssPair[0]];
+            factory.saveBlob(blob);
+        };
+
+        factory.deleteSsPairs = function (userId) {
+            var blob = factory.getBlob(userId);
+            blob.ssKeys = {};
+            factory.saveBlob(blob);
+        };
+
+        /*
+        BLOBS
+         */
+
+        factory.saveBlob = function(blob){
+            var blobs = factory.getBlobs();
+
+            // if no blobs array then create
+            if(blobs == null)
+                blobs = [];
+
+            //replace blob if userId already exists
+            for(var x=0; x<blobs.length; x++){
+                if(blobs[x].userId == blob.userId){
+                    blobs.splice(x, 1);
+                }
             }
 
-            factory.saveSsPairs(pairs);
+            //add blob to blob array
+            blobs.push(blob);
+
+            alert(JSON.stringify(blobs));
+            localStorage.removeItem('superCrow.blobs');
+            localStorage.setItem('superCrow.blobs', JSON.stringify(blobs));
         };
 
-        factory.deleteSsPairs = function () {
-            localStorage.removeItem('superCrow.ssKeys');
+        factory.deleteBlob = function(userId){
+            var blobs = factory.getBlobs();
+
+            for(var x=0; x<blobs.length; x++){
+                if(blobs[x].userId == userId){
+                    blobs.splice(x, 1);
+                }
+            }
+
+            localStorage.removeItem('superCrow.blobs');
+            localStorage.setItem('superCrow.blobs', JSON.stringify(blobs));
         };
 
+        factory.getBlob = function(userId){
+            var blobs = factory.getBlobs();
+
+            if(blobs != null) {
+                for (var x = 0; x < blobs.length; x++) {
+                    if (blobs[x].userId == userId) {
+                        return blobs[x].blob;
+                    }
+                }
+            }
+
+            return null;
+        };
+
+        factory.getBlobs = function(){
+            var result = localStorage.getItem('superCrow.blobs');
+            return result != null ? JSON.parse(result) : null;
+        };
 
         return factory;
     };

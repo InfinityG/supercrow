@@ -3,46 +3,44 @@
  */
 (function () {
 
-    var injectParams = ['$http', '$window', '$rootScope', 'config', 'localStorageService', 'sessionStorageService',
-        'keyService', 'walletService'];
+    var injectParams = ['$http', '$rootScope', 'config', 'localStorageService', 'tokenService',
+        'keyService', 'cryptoService', 'walletService'];
 
-    var contractFactory = function ($http, $window, $rootScope, config, localStorageService, sessionStorageService,
-                                    keyService, walletService) {
+    var contractFactory = function ($http, $rootScope, config, localStorageService, tokenService,
+                                    keyService, cryptoService, walletService) {
 
-        var serviceBase = config.apiHost, factory = {};
+        var serviceBase = config.apiHost, nacl = config.nacl, factory = {};
 
         factory.getSavedContracts = function () {
-            var contracts = localStorageService.getContracts();
-            var context = sessionStorageService.getAuthToken();
+            var userId = tokenService.getContext().userId;
+            var contracts = localStorageService.getContracts(userId);
 
             var savedContracts = [];
 
             for (var x = 0; x < contracts.length; x++) {
-                if ((contracts[x].id == null || contracts[x].id == '') &&
-                    context.user_id == contracts[x].user_id) {
+                if (contracts[x].id == null || contracts[x].id == '')
                     savedContracts.push(contracts[x]);
-                }
             }
             return savedContracts;
         };
 
         factory.getSubmittedContracts = function () {
-            var contracts = localStorageService.getContracts();
-            var context = sessionStorageService.getAuthToken();
+            var userId = tokenService.getContext().userId;
+            var contracts = localStorageService.getContracts(userId);
 
             var submittedContracts = [];
 
             for (var x = 0; x < contracts.length; x++) {
-                if ((contracts[x].id != null && contracts[x].id != '') &&
-                    context.user_id == contracts[x].user_id) {
+                if (contracts[x].id != null && contracts[x].id != '')
                     submittedContracts.push(contracts[x]);
-                }
             }
             return submittedContracts;
         };
 
         factory.saveContract = function (contract) {
-            localStorageService.saveContract(contract);
+            var userId = tokenService.getContext().userId;
+            localStorageService.saveContract(userId, contract);
+
             $rootScope.$broadcast('contractEvent', {
                 type: 'Success',
                 status: 0,
@@ -51,8 +49,9 @@
         };
 
         factory.updateContract = function (contract) {
-            localStorageService.getContract(contract.external_id);
-            localStorageService.saveContract(contract);
+            var userId = tokenService.getContext().userId;
+            localStorageService.saveContract(userId, contract);
+
             $rootScope.$broadcast('contractEvent', {
                 type: 'Success',
                 status: 0,
@@ -61,7 +60,9 @@
         };
 
         factory.deleteContract = function (contract) {
-            localStorageService.deleteContract(contract.external_id);
+            var userId = tokenService.getContext().userId;
+            localStorageService.deleteContract(userId, contract.external_id);
+
             $rootScope.$broadcast('contractEvent', {
                 type: 'Success',
                 status: 0,
@@ -69,16 +70,13 @@
             });
         };
 
-        factory.sendContract = function (contract) {
-            //generate a shared secret at the last minute and save it
-            var sharedSecret = getSharedSecret();
-            keyService.saveSsPair(sharedSecret);
+        // the sending of a contract requires a number of finalization
+        // steps, including signing - hence the password is required at this
+        // point from the user
+        factory.sendContract = function (password, contract) {
+            //TODO: validate the password?
 
-            //add a shared secret fragment to the contract
-            contract.participants[0].wallet.secret.fragments.push(sharedSecret[0]);
-
-            //update the date to unix format
-            setUnixDate(contract);
+            factory.finalizeContract(password, contract);
 
             return $http.post(serviceBase + '/contracts', contract)
                 .then(function (response) {
@@ -91,8 +89,37 @@
                 });
         };
 
-        factory.getContract = function (external_id) {
-            var requestedContract = localStorageService.getContract(external_id);
+        factory.finalizeContract = function(password, contract){
+            //get the crypto key
+            var userId = tokenService.getContext().userId;
+            var cryptoKey = keyService.generateAESKey(password, nacl);
+
+            //generate a shared secret at the last minute and save it
+            var sharedSecret = factory.getSharedSecret();
+            keyService.saveSsPair(userId, sharedSecret);
+
+            //add a shared secret fragment to the contract
+            contract.participants[0].wallet.secret.fragments.push(sharedSecret[0]);
+
+            //update the date to unix format
+            factory.setUnixDate(contract);
+
+            // now sign the contract
+            factory.signContract(cryptoKey, contract);
+        };
+
+        factory.signContract = function(cryptoKey, contract){
+            var signingKey = cryptoService.decryptString(cryptoKey, contract.keys.sk);
+            var contractDigest = cryptoService.createMessageDigest(JSON.stringify(contract));
+            var signedContract = cryptoService.signMessage(contractDigest, signingKey);
+
+            contract.signatures[0].value = signedContract;
+            contract.signatures[0].digest = contractDigest;
+        };
+
+        factory.getContract = function (externalId) {
+            var userId = tokenService.getContext().userId;
+            var requestedContract = localStorageService.getContract(userId, externalId);
 
             if (requestedContract != null) {
                 return requestedContract;
@@ -106,9 +133,17 @@
         };
 
         factory.getContractTemplate = function () {
-            var userId = sessionStorageService.getAuthToken().user_id;
-            var creatorPublicSigningKey = keyService.getSigningKeyPair().pk;
-            var creatorWalletAddress = walletService.getWallet().address;
+            var userId = tokenService.getContext().userId;
+
+            var creatorSigningPair = keyService.getSigningKeyPair(userId);
+            var creatorPublicSigningKey = creatorSigningPair.pk;
+
+            var creatorWalletAddress = null;
+            var creatorWallet = walletService.getWallet(userId);
+
+            if(creatorWallet != null){
+                creatorWalletAddress = creatorWallet.address;
+            }
 
             return {
                 user_id: userId,
@@ -185,17 +220,18 @@
             };
         };
 
-        function getSharedSecret() {
-            var wallet = walletService.getWallet();
+        factory.getSharedSecret = function() {
+            var userId = tokenService.getContext().userId;
+            var wallet = walletService.getWallet(userId);
             return wallet != null ? keyService.getSplitWalletSecret(wallet) : null;
-        }
+        };
 
-        function setUnixDate(contract) {
+        factory.setUnixDate = function(contract) {
             var dateArr = contract.expires.split('/');
             var unixExpiry = new Date(dateArr[2], dateArr[1], dateArr[0]).getTime() / 1000;
             contract.expires = unixExpiry;
             contract.conditions[0].expires = unixExpiry;
-        }
+        };
 
         return factory;
     };

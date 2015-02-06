@@ -20,8 +20,8 @@
             alert('Decrypted plaintext: ' + decryptedText);
         };
 
-        factory.encryptString = function (plainText) {
-            var aes = factory.getAESInstance();
+        factory.encryptString = function (cryptoKey, plainText) {
+            var aes = factory.getAESInstance(cryptoKey);
             var uaArr = factory.textToIntArray(plainText);
 
             var cipherText = '';
@@ -41,8 +41,8 @@
             return factory.base64Encode(result);
         };
 
-        factory.decryptString = function (cipherText) {
-            var aes = factory.getAESInstance();
+        factory.decryptString = function (cryptoKey, cipherText) {
+            var aes = factory.getAESInstance(cryptoKey);
             var decodedText = factory.base64Decode(cipherText);
             var arr = decodedText.split(',');
 
@@ -60,13 +60,18 @@
             return result;
         };
 
-        factory.getAESInstance = function () {
-            //generate a key based on the password and a salt
-            var pwd = 'sup3rs3cr3t!^';
-            var salt = '9612700b954743e0b38f2faff35d264c';
-            var key = keyService.generateAESKey(pwd, salt);
+        //factory.getAESInstance = function () {
+        //    //generate a key based on the password and a salt
+        //    var pwd = 'sup3rs3cr3t!^';
+        //    var salt = '9612700b954743e0b38f2faff35d264c';
+        //    var key = keyService.generateAESKey(pwd, salt);
+        //
+        //    //now use the new key to instantiate AES
+        //    var AES = require('aes');
+        //    return new AES(key);
+        //};
 
-            //now use the new key to instantiate AES
+        factory.getAESInstance = function (key) {
             var AES = require('aes');
             return new AES(key);
         };

@@ -1,12 +1,12 @@
 (function () {
-    var injectParams = ['localStorageService'];
+    var injectParams = ['localStorageService', 'sessionStorageService'];
 
-    var keyFactory = function (localStorageService) {
+    var keyFactory = function (localStorageService, sessionStorageService) {
 
         var factory = {};
 
         /*
-        WALLET SECRET KEY SHARING
+         WALLET SECRET KEY SHARING
          */
 
         factory.getSplitWalletSecret = function (wallet) {
@@ -19,12 +19,13 @@
             return result;
         };
 
-        factory.saveSsPair = function(ssPair){
-            localStorageService.saveSsPair(ssPair);
+        factory.saveSsPair = function (ssPair) {
+            var userId = sessionStorageService.getAuthToken().userId;
+            localStorageService.saveSsPair(userId, ssPair);
         };
 
         /*
-        ASYMMETRIC ENCRYPTION - ECDSA signature keys
+         ASYMMETRIC ENCRYPTION - ECDSA signature keys
          */
 
         factory.generateSigningKeyPair = function () {
@@ -39,15 +40,21 @@
             return {pk: ck.publicKey.toString('base64'), sk: privateKey.toString('base64')};
         };
 
-        factory.getSigningKeyPair = function(){
-          return localStorageService.getKeyPair();
+        factory.getSigningKeyPair = function () {
+            var userId = sessionStorageService.getAuthToken().userId;
+            return localStorageService.getKeyPair(userId);
+        };
+
+        factory.saveSigningKeyPair = function (pair) {
+            var userId = sessionStorageService.getAuthToken().userId;
+            localStorageService.saveKeyPair(userId, pair);
         };
 
         /*
-        SYMMETRIC ENCRYPTION - AES key generation
+         SYMMETRIC ENCRYPTION - AES key generation
          */
 
-        factory.generateAESKey = function(password, salt){
+        factory.generateAESKey = function (password, salt) {
             // use pbkdf2 to convert variable password length to 256 bit hash,
             // split into 8 bytes of 32 bits each
             var pbkdf2 = require('pbkdf2-sha256');

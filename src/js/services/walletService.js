@@ -3,14 +3,20 @@
  */
 (function () {
 
-    var injectParams = ['$http', 'localStorageService'];
+    var injectParams = ['$http', 'tokenService', 'localStorageService'];
 
-    var walletFactory = function ($http, localStorageService) {
+    var walletFactory = function ($http, tokenService, localStorageService) {
 
         var factory = {};
 
         factory.getWallet = function(){
-            return localStorageService.getWallet();
+            var userId = tokenService.getContext().userId;
+            return localStorageService.getWallet(userId);
+        };
+
+        factory.saveWallet = function(wallet){
+            var userId = tokenService.getContext().userId;
+            localStorageService.saveWallet(userId, wallet);
         };
 
         return factory;
