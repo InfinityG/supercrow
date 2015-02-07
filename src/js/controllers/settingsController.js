@@ -1,11 +1,13 @@
 (function () {
 
-    var injectParams = ['$scope', '$location', '$routeParams', '$window', 'tokenService', 'keyService', 'cryptoService', 'walletService'];
+    var injectParams = ['$scope', '$location', '$routeParams', '$window', 'config', 'tokenService', 'keyService', 'cryptoService', 'walletService'];
 
-    var SettingsController = function ($scope, $location, $routeParams, $window, tokenService, keyService, cryptoService, walletService) {
+    var SettingsController = function ($scope, $location, $routeParams, $window, config, tokenService, keyService,
+                                       cryptoService, walletService) {
 
         $scope.currentKeyPair = null;
         $scope.currentWallet = null;
+        $scope.password = null;
 
         function init() {
             var context = tokenService.getContext();
@@ -32,12 +34,15 @@
             };
         }
 
-        $scope.regenerateKeyPair = function () {
-            var pair = keyService.generateSigningKeyPair();
+        $scope.regenerateKeyPair = function (password) {
+            var cryptoKey = keyService.generateAESKey(password, config.nacl);
 
-            //encrypt the secret key
-            var encSecret = cryptoService.encryptString(pair.sk);
-            pair.sk = encSecret;
+            if(! cryptoService.validateAESKey(cryptoKey, $scope.currentKeyPair.sk))
+                return;
+
+            //encrypt the secret key and set it back
+            var pair = keyService.generateSigningKeyPair();
+            pair.sk = cryptoService.encryptString(cryptoKey, pair.sk);
 
             //save the pair
             keyService.saveSigningKeyPair(pair);

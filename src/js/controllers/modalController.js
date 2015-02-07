@@ -21,6 +21,16 @@
             $scope.message = args.message;
             $scope.status = args.status;
         });
+
+        $scope.$on('encryptionEvent', function (event, args) {
+            $scope.show = true;
+            $scope.type = args.type;
+
+            if(args.type == 'Error')
+                $scope.message = 'Invalid password';
+            else
+                $scope.message = args.message;
+        });
     };
 
     ModalController.$inject = injectParams;

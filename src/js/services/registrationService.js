@@ -25,6 +25,7 @@
                         message: 'User successfully registered!'
                     });
 
+                    //emit this to be used for encrypting newly generated secret signing keys
                     $rootScope.$broadcast('registrationEvent', {key:cryptoKey});
                 });
         };

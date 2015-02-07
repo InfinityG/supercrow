@@ -74,25 +74,31 @@
         // steps, including signing - hence the password is required at this
         // point from the user
         factory.sendContract = function (password, contract) {
-            //TODO: validate the password?
 
-            factory.finalizeContract(password, contract);
+            if (factory.finalizeContract(password, contract)) {
 
-            return $http.post(serviceBase + '/contracts', contract)
-                .then(function (response) {
-                    localStorageService.saveContract(response.data);
-                    $rootScope.$broadcast('contractEvent', {
-                        type: 'Success',
-                        status: response.status,
-                        message: "Contract '" + contract.name + "' saved"
+                return $http.post(serviceBase + '/contracts', contract)
+                    .then(function (response) {
+                        localStorageService.saveContract(response.data);
+
+                        //emit event for modal
+                        $rootScope.$broadcast('contractEvent', {
+                            type: 'Success',
+                            status: response.status,
+                            message: "Contract '" + contract.name + "' saved"
+                        });
                     });
-                });
+            }
         };
 
-        factory.finalizeContract = function(password, contract){
+        factory.finalizeContract = function (password, contract) {
             //get the crypto key
             var userId = tokenService.getContext().userId;
             var cryptoKey = keyService.generateAESKey(password, nacl);
+
+            //validate crypto key (this will emit an event if error)
+            if (!cryptoService.validateAESKey(cryptoKey, contract.keys.sk))
+                return false;
 
             //generate a shared secret at the last minute and save it
             var sharedSecret = factory.getSharedSecret();
@@ -106,9 +112,11 @@
 
             // now sign the contract
             factory.signContract(cryptoKey, contract);
+
+            return true;
         };
 
-        factory.signContract = function(cryptoKey, contract){
+        factory.signContract = function (cryptoKey, contract) {
             var signingKey = cryptoService.decryptString(cryptoKey, contract.keys.sk);
             var contractDigest = cryptoService.createMessageDigest(JSON.stringify(contract));
             var signedContract = cryptoService.signMessage(contractDigest, signingKey);
@@ -141,7 +149,7 @@
             var creatorWalletAddress = null;
             var creatorWallet = walletService.getWallet(userId);
 
-            if(creatorWallet != null){
+            if (creatorWallet != null) {
                 creatorWalletAddress = creatorWallet.address;
             }
 
@@ -220,13 +228,13 @@
             };
         };
 
-        factory.getSharedSecret = function() {
+        factory.getSharedSecret = function () {
             var userId = tokenService.getContext().userId;
             var wallet = walletService.getWallet(userId);
             return wallet != null ? keyService.getSplitWalletSecret(wallet) : null;
         };
 
-        factory.setUnixDate = function(contract) {
+        factory.setUnixDate = function (contract) {
             var dateArr = contract.expires.split('/');
             var unixExpiry = new Date(dateArr[2], dateArr[1], dateArr[0]).getTime() / 1000;
             contract.expires = unixExpiry;

@@ -1,12 +1,12 @@
 (function () {
-    var injectParams = ['keyService'];
+    var injectParams = ['$rootScope'];
 
-    var cryptoFactory = function (keyService) {
+    var cryptoFactory = function ($rootScope) {
 
         var factory = {};
 
         /*
-        SYMMETRIC ENCRYPTION - AES
+         SYMMETRIC ENCRYPTION - AES
          */
 
         factory.encryptTest = function () {
@@ -21,20 +21,31 @@
         };
 
         factory.encryptString = function (cryptoKey, plainText) {
-            var aes = factory.getAESInstance(cryptoKey);
-            var uaArr = factory.textToIntArray(plainText);
+            try {
+                var aes = factory.getAESInstance(cryptoKey);
+                var uaArr = factory.textToIntArray(plainText);
 
-            var cipherText = '';
+                var cipherText = '';
 
-            //iterate through array and encrypt every block of 4
-            var pos = 0;
-            while (pos < uaArr.length) {
-                var block = uaArr.slice(pos, pos + 4);
-                var encBlock = aes.encrypt(block);
-                for (var x = 0; x < encBlock.length; x++) {
-                    cipherText += encBlock[x] + ',';
+                //iterate through array and encrypt every block of 4
+                var pos = 0;
+                while (pos < uaArr.length) {
+                    var block = uaArr.slice(pos, pos + 4);
+                    var encBlock = aes.encrypt(block);
+                    for (var x = 0; x < encBlock.length; x++) {
+                        cipherText += encBlock[x] + ',';
+                    }
+                    pos += 4;
                 }
-                pos += 4;
+            } catch (e) {
+                //event for modals
+                $rootScope.$broadcast('encryptionEvent', {
+                    type: 'Error',
+                    status: 0,
+                    message: "Encryption error!"
+                });
+                //throw e;
+                return null;
             }
 
             var result = cipherText.substring(0, cipherText.length - 1); //remove the last comma
@@ -42,34 +53,51 @@
         };
 
         factory.decryptString = function (cryptoKey, cipherText) {
-            var aes = factory.getAESInstance(cryptoKey);
-            var decodedText = factory.base64Decode(cipherText);
-            var arr = decodedText.split(',');
+            try {
+                var aes = factory.getAESInstance(cryptoKey);
+                var decodedText = factory.base64Decode(cipherText);
+                var arr = decodedText.split(',');
 
-            var result = '';
+                var result = '';
 
-            //iterate through int array and decrypt every block of 4
-            var pos = 0;
-            while (pos < arr.length) {
-                var block = arr.slice(pos, pos + 4);
-                var decArr = aes.decrypt(block);
-                result += factory.intArrayToText(decArr);
-                pos += 4;
+                //iterate through int array and decrypt every block of 4
+                var pos = 0;
+                while (pos < arr.length) {
+                    var block = arr.slice(pos, pos + 4);
+                    var decArr = aes.decrypt(block);
+                    result += factory.intArrayToText(decArr);
+                    pos += 4;
+                }
+            } catch (e) {
+                //event for modals
+                $rootScope.$broadcast('encryptionEvent', {
+                    type: 'Error',
+                    status: 0,
+                    message: "Decryption error!"
+                });
+                //throw e;
+                return null;
             }
 
             return result;
         };
 
-        //factory.getAESInstance = function () {
-        //    //generate a key based on the password and a salt
-        //    var pwd = 'sup3rs3cr3t!^';
-        //    var salt = '9612700b954743e0b38f2faff35d264c';
-        //    var key = keyService.generateAESKey(pwd, salt);
-        //
-        //    //now use the new key to instantiate AES
-        //    var AES = require('aes');
-        //    return new AES(key);
-        //};
+        factory.validateAESKey = function(cryptoKey, cipherTextOriginal){
+            var decrypted = factory.decryptString(cryptoKey, cipherTextOriginal);
+            var encrypted = factory.encryptString(cryptoKey, decrypted);
+
+            var result = (encrypted == cipherTextOriginal);
+
+            //event for modals
+            if(result == false) {
+                $rootScope.$broadcast('encryptionEvent', {
+                    type: 'Error',
+                    message: "Invalid password!"
+                });
+            }
+
+            return result;
+        };
 
         factory.getAESInstance = function (key) {
             var AES = require('aes');
@@ -80,7 +108,7 @@
          ASYMMETRIC ENCRYPTION - ECDSA SIGNATURES
          */
 
-        factory.createMessageDigest = function(message){
+        factory.createMessageDigest = function (message) {
             var crypto = require('crypto');
             var buf = require('buffer');
 
@@ -88,7 +116,7 @@
             return crypto.createHash('sha256').update(msg).digest();
         };
 
-        factory.signMessage = function(messageDigest, privateKey){
+        factory.signMessage = function (messageDigest, privateKey) {
             var ecdsa = require('ecdsa');
 
             var signature = ecdsa.sign(messageDigest, privateKey);
@@ -96,7 +124,7 @@
         };
 
         /*
-        Helpers
+         Helpers
          */
 
         factory.textToIntArray = function (s) {
@@ -115,13 +143,13 @@
             return s;
         };
 
-        factory.base64Encode = function(text){
+        factory.base64Encode = function (text) {
             var buf = require('buffer');
             var buffer = new buf.Buffer(text, 'binary');
             return buffer.toString('base64');
         };
 
-        factory.base64Decode = function(text){
+        factory.base64Decode = function (text) {
             var buf = require('buffer');
             var buffer = new buf.Buffer(text, 'base64');
             return buffer.toString();
