@@ -27,7 +27,7 @@
                     sessionStorageService.saveAuthToken(data.user_id, data.token);
                     var cryptoKey = keyService.generateAESKey(userData.password, nacl);
 
-                    $rootScope.$broadcast('loginEvent', {key: cryptoKey});
+                    $rootScope.$broadcast('loginEvent', {userId: data.user_id, key: cryptoKey});
 
                     $location.path('/');
                 });

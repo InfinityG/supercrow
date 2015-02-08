@@ -3,7 +3,38 @@
 
     <div class="scrollable">
         <div class="scrollable-content">
-            <div class="section">
+
+            <div class="section" ng-show="passwordValidated == false">
+                <div class="panel-group">
+
+                    <div class="panel panel-default">
+                        <div class="panel-heading">
+                            <div class="fa fa-unlock-alt fa-2x">
+                            </div>
+                            <span class="fa fa-2x pull-right">password required</span>
+
+
+                        </div>
+
+                        <div class="panel-body">
+
+                            <div class="input-group input-group-lg">
+                                <span class="input-group-addon"><div class="fa fa-key">password</div> </span>
+                                <input type="password" class="form-control" aria-label="Password"
+                                       placeholder="Password" ng-model="password" required="true"/>
+                            </div>
+                            <br/>
+
+                            <button type="button" class="btn btn-default btn-lg pull-right"
+                                    ng-show="password != null && password != ''" ng-click="validatePassword();">
+                                ok
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="section" ng-show="passwordValidated == true">
                 <div class="panel-group" ui-state='myAccordion' ui-default='1'>
 
                     <div class="panel panel-default">
@@ -15,43 +46,28 @@
 
 
                         </div>
-                        <div ui-if="myAccordion == 1" ui-scope-context='1' ui-state="regenerate" ui-default="false">
+                        <div ui-if="myAccordion == 1" ui-scope-context='1'>
                             <div class="panel-body">
 
-                                <div class="input-group">
-                                    <div class="input-group input-group-lg">
-                                        <span class="input-group-addon"><div class="fa fa-key">public</div> </span>
-                                        <input type="text" class="form-control" aria-label="Address"
-                                               placeholder="Address" ng-model="currentKeyPair.pk" disabled/>
-                                    </div>
-                                    <br/>
-
-                                    <div class="input-group input-group-lg">
-                                        <span class="input-group-addon"><div class="fa fa-key">secret</div> </span>
-                                        <input type="text" class="form-control" aria-label="Secret"
-                                               placeholder="Secret" ng-model="currentKeyPair.sk" disabled/>
-
-                                    </div>
-                                    <br/>
-                                    <button type="button" class="btn btn-default btn-lg pull-right"
-                                            ui-set="{'regenerate': true}">regenerate
-                                    </button>
+                                <div class="input-group input-group-lg">
+                                    <span class="input-group-addon"><div class="fa fa-key">public</div> </span>
+                                    <input type="text" class="form-control" aria-label="Address"
+                                           placeholder="Address" ng-model="currentKeyPair.pk" disabled/>
                                 </div>
+                                <br/>
 
-                                <div class="input-group" ui-if="regenerate == true">
-                                    <br/>
-                                    <div class="input-group input-group-lg">
-                                        <span class="input-group-addon"><div class="fa fa-key">password</div> </span>
-                                        <input type="password" class="form-control" aria-label="Password"
-                                               placeholder="Password" ng-model="password" required="true"/>
-                                    </div>
-                                    <br/>
+                                <div class="input-group input-group-lg">
+                                    <span class="input-group-addon"><div class="fa fa-key">secret</div> </span>
+                                    <input type="text" class="form-control" aria-label="Secret"
+                                           placeholder="Secret" ng-model="currentKeyPair.sk" disabled/>
 
-                                    <button type="button" class="btn btn-default btn-lg pull-right" ng-hide="password == null"
-                                            ng-click="regenerateKeyPair(password);" ui-set="{'regenerate': false}">ok
-                                    </button>
                                 </div>
+                                <br/>
+                                <button type="button" class="btn btn-default btn-lg pull-right"
+                                        ng-click="regenerateKeyPair();">regenerate
+                                </button>
                             </div>
+
                         </div>
 
                     </div>

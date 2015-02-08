@@ -26,7 +26,7 @@
                     });
 
                     //emit this to be used for encrypting newly generated secret signing keys
-                    $rootScope.$broadcast('registrationEvent', {key:cryptoKey});
+                    $rootScope.$broadcast('registrationEvent', {userId: data.user_id, key:cryptoKey});
                 });
         };
 

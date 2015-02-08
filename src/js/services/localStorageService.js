@@ -42,7 +42,7 @@
                 contracts.push(contract);
             }
 
-            factory.saveBlob(blob);
+            factory.saveBlob(userId, blob);
         };
 
         factory.getContract = function (userId, contractExternalId) {
@@ -64,7 +64,7 @@
                 }
             }
 
-            factory.saveBlob(blob);
+            factory.saveBlob(userId, blob);
         };
 
         /*
@@ -116,13 +116,13 @@
         factory.saveContacts = function (userId, contacts) {
             var blob = factory.getBlob(userId);
             blob.contacts = contacts;
-            factory.saveBlob(blob);
+            factory.saveBlob(userId, blob);
         };
 
         factory.saveContact = function (userId, contact) {
             var blob = factory.getBlob(userId);
             blob.contacts.push(contact);
-            factory.saveBlob(blob);
+            factory.saveBlob(userId, blob);
         };
 
         factory.getContact = function (userId, id) {
@@ -144,7 +144,7 @@
                 }
             }
 
-            factory.saveBlob(blob);
+            factory.saveBlob(userId, blob);
         };
 
         /*
@@ -155,7 +155,7 @@
             var blob = factory.getBlob(userId);
             blob.keys = keyPair;
 
-            factory.saveBlob(blob);
+            factory.saveBlob(userId, blob);
         };
 
         factory.getKeyPair = function (userId) {
@@ -175,7 +175,7 @@
         factory.saveWallet = function (userId, wallet) {
             var blob = factory.getBlob(userId);
             blob.wallet = wallet;
-            factory.saveBlob(blob);
+            factory.saveBlob(userId, blob);
         };
 
         factory.getWallet = function (userId) {
@@ -196,14 +196,14 @@
             //adds a ssPair to a user
             var blob = factory.getBlob(userId);
             blob.ssKeys[ssPair[0]] = ssPair[1];
-            factory.saveBlob(blob);
+            factory.saveBlob(userId, blob);
         };
 
         factory.saveSsPairs = function (userId, ssPairs) {
             //replaces all ssPairs for a user
             var blob = factory.getBlob(userId);
             blob.ssKeys = ssPairs;
-            factory.saveBlob(blob);
+            factory.saveBlob(userId, blob);
         };
 
         factory.getSsPairs = function (userId) {
@@ -227,7 +227,7 @@
         BLOBS
          */
 
-        factory.saveBlob = function(blob){
+        factory.saveBlob = function(userId, blob){
             var blobs = factory.getBlobs();
 
             // if no blobs array then create
@@ -236,15 +236,15 @@
 
             //replace blob if userId already exists
             for(var x=0; x<blobs.length; x++){
-                if(blobs[x].userId == blob.userId){
+                if(blobs[x].userId == userId){
+                    alert('Blob found!');
                     blobs.splice(x, 1);
                 }
             }
 
             //add blob to blob array
-            blobs.push(blob);
+            blobs.push({userId: userId, blob: blob});
 
-            alert(JSON.stringify(blobs));
             localStorage.removeItem('superCrow.blobs');
             localStorage.setItem('superCrow.blobs', JSON.stringify(blobs));
         };

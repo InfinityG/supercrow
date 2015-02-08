@@ -15,27 +15,25 @@
         };
 
         factory.saveBlob = function (blob) {
-            localStorageService.saveBlob(blob);
+            var userId = tokenService.getContext().userId;
+            localStorageService.saveBlob(userId, blob);
         };
 
         // generate a new local blob after a userId is received from registration process
         // we need a crypto key to encrypt the secret key on the signing pair
         factory.getBlobTemplate = function (cryptoKey) {
-            var userId = tokenService.getContext().userId;
             var keys = keyService.generateSigningKeyPair();
 
             //encrypt the secret key
             keys.sk = cryptoService.encryptString(cryptoKey, keys.sk);
 
             return {
-                userId: userId,
-                blob: {
                     contacts: [],
                     contracts: [],
                     keys: keys,
                     ssKeys: null,
                     wallet: null
-                }
+
             };
         };
 
