@@ -1,36 +1,45 @@
 (function () {
 
-    var injectParams = ['$scope', '$location'];
+    var injectParams = ['$scope', '$rootScope', '$location'];
 
-    var ModalController = function ($scope, $location) {
+    var ModalController = function ($scope, $rootScope, $location) {
+        $scope.show = false;
         $scope.message = null;
         $scope.type = null;
         $scope.status = null;
+        $scope.redirectUri = '/';
 
         $scope.cancelModal = function(){
             $scope.show = false;
 
+            //redirect=false/true is set on the modalDirective when placed on a page
             if($scope.redirect){
-                $location.path('/');
+                $location.path($scope.redirectUri);
             }
         };
 
-        $scope.$on('contractEvent', function (event, args) {
-            $scope.show = true;
-            $scope.type = args.type;
-            $scope.message = args.message;
-            $scope.status = args.status;
+        var contractEventListener = $rootScope.$on('contractEvent', function (event, args) {
+            showModal(args.type, args.message, args.status, args.redirectUri);
         });
 
-        $scope.$on('encryptionEvent', function (event, args) {
-            $scope.show = true;
-            $scope.type = args.type;
-
-            if(args.type == 'Error')
-                $scope.message = 'Invalid password';
-            else
-                $scope.message = args.message;
+        var encryptionEventListener = $rootScope.$on('encryptionEvent', function (event, args) {
+            var message = args.type == 'Error' ? 'Invalid password' : args.message;
+            showModal(args.type, message,0, null);
         });
+
+        //clean up rootScope listeners
+        $scope.$on('$destroy', function() {
+            contractEventListener();
+            encryptionEventListener();
+        });
+
+        function showModal(type, message, status, redirectUri){
+            $scope.show = true;
+            $scope.type = type;
+            $scope.message = message;
+            $scope.status = status;
+            $scope.redirectUri = redirectUri;
+        }
     };
 
     ModalController.$inject = injectParams;

@@ -17,7 +17,7 @@
                     var data = response.data;
 
                     sessionStorageService.saveAuthToken(data.id, data.token);
-                    var cryptoKey =  keyService.generateAESKey(userData.password, nacl);
+                    var cryptoKey = keyService.generateAESKey(userData.password, nacl);
 
                     $rootScope.$broadcast('contractEvent', {
                         type: 'Success',
@@ -26,7 +26,7 @@
                     });
 
                     //emit this to be used for encrypting newly generated secret signing keys
-                    $rootScope.$broadcast('registrationEvent', {userId: data.user_id, key:cryptoKey});
+                    $rootScope.$broadcast('registrationEvent', {userId: data.user_id, key: cryptoKey});
                 });
         };
 

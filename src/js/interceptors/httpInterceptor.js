@@ -14,16 +14,29 @@
                 return response;
             },
             'responseError': function (rejection) {
-                switch(rejection.status){
+                switch (rejection.status) {
                     case 401:
-                        $rootScope.$broadcast('contractEvent', {type:'Error', status: rejection.status, message:rejection.data});
-                        $location.path('/login');
+                        $rootScope.$broadcast('contractEvent', {
+                                type: 'Error',
+                                status: rejection.status,
+                                message: rejection.data,
+                                redirectUri: '/login'
+                            }
+                        );
                         break;
                     case 0:
-                        $rootScope.$broadcast('contractEvent', {type:'Error', status: rejection.status, message:'No connection!'});
+                        $rootScope.$broadcast('contractEvent', {
+                            type: 'Error',
+                            status: rejection.status,
+                            message: 'No connection!'
+                        });
                         break;
                     default :
-                        $rootScope.$broadcast('contractEvent', {type:'Error', status:rejection.status, message:rejection.data});
+                        $rootScope.$broadcast('contractEvent', {
+                            type: 'Error',
+                            status: rejection.status,
+                            message: rejection.data
+                        });
                         break;
                 }
 

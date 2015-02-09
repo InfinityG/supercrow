@@ -41,10 +41,12 @@
             var userId = tokenService.getContext().userId;
             localStorageService.saveContract(userId, contract);
 
+            //emit event for modal
             $rootScope.$broadcast('contractEvent', {
                 type: 'Success',
                 status: 0,
-                message: "Contract '" + contract.name + "' saved"
+                message: "Contract '" + contract.name + "' saved",
+                redirectUri : '/'
             });
         };
 
@@ -52,10 +54,12 @@
             var userId = tokenService.getContext().userId;
             localStorageService.saveContract(userId, contract);
 
+            //emit event for modal
             $rootScope.$broadcast('contractEvent', {
                 type: 'Success',
                 status: 0,
-                message: "Contract '" + contract.name + "' updated'"
+                message: "Contract '" + contract.name + "' updated'",
+                redirectUri : '/'
             });
         };
 
@@ -63,10 +67,12 @@
             var userId = tokenService.getContext().userId;
             localStorageService.deleteContract(userId, contract.external_id);
 
+            //emit event for modal
             $rootScope.$broadcast('contractEvent', {
                 type: 'Success',
                 status: 0,
-                message: "Contract '" + contract.name + "' deleted"
+                message: "Contract '" + contract.name + "' deleted",
+                redirectUri : '/'
             });
         };
 
@@ -85,7 +91,8 @@
                         $rootScope.$broadcast('contractEvent', {
                             type: 'Success',
                             status: response.status,
-                            message: "Contract '" + contract.name + "' saved"
+                            message: "Contract '" + contract.name + "' saved",
+                            redirectUri : '/'
                         });
                     });
             }
@@ -133,21 +140,23 @@
                 return requestedContract;
             }
 
+            //emit event for modal
             $rootScope.$broadcast('contractEvent', {
                 type: 'Error',
                 status: 0,
-                message: "Contract could not be found"
+                message: "Contract could not be found",
+                redirectUri:'/'
             });
         };
 
         factory.getContractTemplate = function () {
             var userId = tokenService.getContext().userId;
 
-            var creatorSigningPair = keyService.getSigningKeyPair(userId);
+            var creatorSigningPair = keyService.getSigningKeyPair();
             var creatorPublicSigningKey = creatorSigningPair.pk;
 
             var creatorWalletAddress = null;
-            var creatorWallet = walletService.getWallet(userId);
+            var creatorWallet = walletService.getWallet();
 
             if (creatorWallet != null) {
                 creatorWalletAddress = creatorWallet.address;

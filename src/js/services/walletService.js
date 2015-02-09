@@ -3,9 +3,9 @@
  */
 (function () {
 
-    var injectParams = ['$http', 'tokenService', 'localStorageService'];
+    var injectParams = ['$rootScope', 'tokenService', 'localStorageService'];
 
-    var walletFactory = function ($http, tokenService, localStorageService) {
+    var walletFactory = function ($rootScope, tokenService, localStorageService) {
 
         var factory = {};
 

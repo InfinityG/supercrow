@@ -39,6 +39,7 @@
             }
         };
 
+        //TODO: clean up $rootScope listeners
         factory.setupListener = function() {
             $rootScope.$on('loginEvent', function (event, args) {
                 factory.start(args.key);

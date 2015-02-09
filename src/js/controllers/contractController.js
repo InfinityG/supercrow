@@ -1,8 +1,10 @@
 (function () {
 
-    var injectParams = ['$scope', '$location', '$routeParams', '$window', 'tokenService', 'contractService', 'contactService'];
+    var injectParams = ['$scope', '$rootScope', '$location', '$routeParams', 'tokenService', 'contractService',
+                            'contactService'];
 
-    var ContractsController = function ($scope, $location, $routeParams, $window, tokenService, contractService, contactService) {
+    var ContractsController = function ($scope, $rootScope, $location, $routeParams, tokenService, contractService,
+                                        contactService) {
 
         $scope.cannedReasons = ['Work Done', 'Goal Achieved', 'Goods Received', 'Recognition', 'Occasion/event'];
 
@@ -22,12 +24,28 @@
             if(context == null || context == '') {
                 $location.path('/login');
             }else {
-                var contractId = ($routeParams.contractId) ? parseInt($routeParams.contractId) : 0;
-                loadData(contractId);
+                setViewContentListener();
+                loadData();
             }
         }
 
-        function loadData(contractId) {
+        //this is fired after the model and page has loaded
+        function setViewContentListener(){
+            $scope.$on('$viewContentLoaded', function() {
+                if($scope.currentContract.wallet == null) {
+                    $rootScope.$broadcast('contractEvent', {
+                        type: 'Notice',
+                        message: "Please update your wallet details",
+                        status: 0,
+                        redirectUri:'/settings'
+                    });
+                }
+            });
+        }
+
+        function loadData() {
+            var contractId = ($routeParams.contractId) ? parseInt($routeParams.contractId) : 0;
+
             //populate lists
             $scope.contacts = contactService.getContacts();
             $scope.savedContracts = contractService.getSavedContracts();
@@ -55,6 +73,10 @@
             }
         }
 
+        function getContractTemplate() {
+            return contractService.getContractTemplate();
+        }
+
         $scope.oracleSelected = function (oracle) {
             $scope.currentOracle = oracle;
             $scope.currentContract.participants[2].external_id = oracle.id;
@@ -78,24 +100,12 @@
             $scope.currentContract.participants[1].public_key = contact.publicKey;
         };
 
-        function getContractTemplate() {
-            return contractService.getContractTemplate();
-        }
-
         $scope.saveContract = function (contract) {
-            try {
-                contractService.saveContract(contract);
-            } catch (e) {
-                $window.alert(e);
-            }
+            contractService.saveContract(contract);
         };
 
         $scope.sendContract = function (contract) {
-            try {
                 contractService.sendContract(contract);
-            }catch(e){
-                $window.alert(e);
-            }
         };
 
         $scope.deleteContract = function (contract) {
