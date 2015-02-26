@@ -23,8 +23,8 @@
         });
 
         var encryptionEventListener = $rootScope.$on('encryptionEvent', function (event, args) {
-            var message = args.type == 'Error' ? 'Invalid password' : args.message;
-            showModal(args.type, message,0, null);
+            //var message = args.type == 'Error' ? 'Invalid password' : args.message;
+            showModal(args.type, args.message, 0, null);
         });
 
         //clean up rootScope listeners

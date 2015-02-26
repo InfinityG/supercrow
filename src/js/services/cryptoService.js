@@ -31,6 +31,7 @@
                 var pos = 0;
                 while (pos < uaArr.length) {
                     var block = uaArr.slice(pos, pos + 4);
+                    factory.pad(block); //pad the last block if necessary
                     var encBlock = aes.encrypt(block);
                     for (var x = 0; x < encBlock.length; x++) {
                         cipherText += encBlock[x] + ',';
@@ -42,7 +43,7 @@
                 $rootScope.$broadcast('encryptionEvent', {
                     type: 'Error',
                     status: 0,
-                    message: "Encryption error!"
+                    message: "Encryption error! (" + e.message + ")"
                 });
                 //throw e;
                 return null;
@@ -89,7 +90,7 @@
             var result = (encrypted == cipherTextOriginal);
 
             //event for modals
-            if(result == false) {
+            if (!result) {
                 $rootScope.$broadcast('encryptionEvent', {
                     type: 'Error',
                     message: "Invalid password!"
@@ -153,6 +154,12 @@
             var buf = require('buffer');
             var buffer = new buf.Buffer(text, 'base64');
             return buffer.toString();
+        };
+
+        factory.pad = function(block){
+            while(block.length < 4){
+                block.push(0);
+            }
         };
 
         return factory;

@@ -237,7 +237,6 @@
             //replace blob if userId already exists
             for(var x=0; x<blobs.length; x++){
                 if(blobs[x].userId == userId){
-                    alert('Blob found!');
                     blobs.splice(x, 1);
                 }
             }

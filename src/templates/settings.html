@@ -82,27 +82,43 @@
 
                         </div>
                         <div ui-if="myAccordion == 2" ui-scope-context='2'>
-                            <div class="panel-body">
-                                <div class="section">Your Ripple wallet details</div>
+                            <form name="walletForm" novalidate>
+                                <div class="panel-body">
+                                    <div class="section">Your Ripple wallet details</div>
 
-                                <div class="input-group input-group-lg">
-                                    <span class="input-group-addon"><div class="fa fa-key">address</div> </span>
-                                    <input type="text" class="form-control" aria-label="Address"
-                                           placeholder="Address" ng-model="currentWallet.address"/>
+                                    <div class="input-group input-group-lg">
+                                        <span class="input-group-addon"><div class="fa fa-key">address</div> </span>
+                                        <input type="text" ripple-address name="address" class="form-control"
+                                               aria-label="Address"
+                                               placeholder="Address" ng-model="currentWallet.address" required/>
+                                     <span class="input-group-addon"
+                                           ng-show="walletForm.address.$dirty && walletForm.address.$invalid">
+                                        <div class="fa fa-exclamation-triangle"></div>
+                                    </span>
+                                    </div>
+                                    <br/>
+
+                                    <div class="input-group input-group-lg">
+                                        <span class="input-group-addon"><div class="fa fa-key">secret</div> </span>
+                                        <input type="text" ripple-secret name="secret" class="form-control"
+                                               aria-label="Secret"
+                                               placeholder="Secret" ng-model="currentWallet.secret" required/>
+                                     <span class="input-group-addon"
+                                           ng-show="walletForm.secret.$dirty && walletForm.secret.$invalid">
+                                        <div class="fa fa-exclamation-triangle"></div>
+                                    </span>
+
+                                    </div>
+                                    <br/>
+                                    <button type="button" class="btn btn-default btn-lg pull-right"
+                                            ng-click="saveWallet();"
+                                            ng-hide="walletForm.address.$invalid ||
+                                        currentWallet.address == '' ||
+                                        walletForm.secret.$invalid ||
+                                        currentWallet.secret == ''">save
+                                    </button>
                                 </div>
-                                <br/>
-
-                                <div class="input-group input-group-lg">
-                                    <span class="input-group-addon"><div class="fa fa-key">secret</div> </span>
-                                    <input type="text" class="form-control" aria-label="Secret"
-                                           placeholder="Secret" ng-model="currentWallet.secret"/>
-
-                                </div>
-                                <br/>
-                                <button type="button" class="btn btn-default btn-lg pull-right"
-                                        ng-click="saveWallet(currentWallet);">save
-                                </button>
-                            </div>
+                            </form>
                         </div>
 
                     </div>

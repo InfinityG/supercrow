@@ -14,21 +14,21 @@
         function init() {
             var context = tokenService.getContext();
 
-            if(context == null || context == '')
+            if (context == null || context == '')
                 $location.path('/login');
         }
 
-        $scope.validatePassword = function(){
+        $scope.validatePassword = function () {
             var keyPair = keyService.getSigningKeyPair();
             var cryptoKey = keyService.generateAESKey($scope.password, config.nacl);
 
-            if(cryptoService.validateAESKey(cryptoKey, keyPair.sk)) {
+            if (cryptoService.validateAESKey(cryptoKey, keyPair.sk)) {
                 $scope.passwordValidated = true;
                 $scope.cryptoKey = cryptoKey;
 
                 $scope.loadDecryptedSigningKeyPair(keyPair);
                 $scope.loadDecryptedWallet();
-            }else{
+            } else {
                 $scope.password = null;
                 $scope.passwordValidated = false;
                 $scope.cryptoKey = null;
@@ -38,36 +38,37 @@
         $scope.regenerateKeyPair = function () {
             //encrypt the secret key and set it back
             var pair = keyService.generateSigningKeyPair();
-            pair.sk = cryptoService.encryptString($scope.cryptoKey, pair.sk);
+            var encryptedSecret = cryptoService.encryptString($scope.cryptoKey, pair.sk);
 
             //save the pair
-            keyService.saveSigningKeyPair(pair);
+            keyService.saveSigningKeyPair({pk: pair.pk, sk: encryptedSecret});
 
-            $scope.loadDecryptedSigningKeyPair(pair);
+            $scope.currentKeyPair = pair;
         };
 
-        $scope.loadDecryptedWallet = function(){
+        $scope.loadDecryptedWallet = function () {
             var wallet = walletService.getWallet();
 
-            if(wallet != null){
+            if (wallet != null) {
                 wallet.secret = cryptoService.decryptString($scope.cryptoKey, wallet.secret);
                 $scope.currentWallet = wallet;
-            }else{
+            } else {
                 $scope.currentWallet = getWalletTemplate();
             }
         };
 
-        $scope.loadDecryptedSigningKeyPair = function(keyPair){
+        $scope.loadDecryptedSigningKeyPair = function (keyPair) {
             keyPair.sk = cryptoService.decryptString($scope.cryptoKey, keyPair.sk);
             $scope.currentKeyPair = keyPair;
         };
 
-        $scope.saveWallet = function (wallet) {
-            try {
-                walletService.saveWallet(wallet);
-                loadData(0);
-            } catch (e) {
-                $window.alert(e);
+        $scope.saveWallet = function () {
+            //re-encrypt the secret
+            var encryptedSecret = cryptoService.encryptString($scope.cryptoKey, $scope.currentWallet.secret);
+
+            if (encryptedSecret != null) {
+                $scope.currentWallet.secret = encryptedSecret;
+                walletService.saveWallet($scope.currentWallet);
             }
         };
 

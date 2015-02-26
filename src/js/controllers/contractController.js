@@ -32,7 +32,9 @@
         //this is fired after the model and page has loaded
         function setViewContentListener(){
             $scope.$on('$viewContentLoaded', function() {
-                if($scope.currentContract.wallet == null) {
+                if($scope.currentContract.wallet == null ||
+                    $scope.currentContract.wallet.address == null ||
+                    $scope.currentContract.wallet.secret == null) {
                     $rootScope.$broadcast('contractEvent', {
                         type: 'Notice',
                         message: "Please update your wallet details",
@@ -44,7 +46,8 @@
         }
 
         function loadData() {
-            var contractId = ($routeParams.contractId) ? parseInt($routeParams.contractId) : 0;
+            var contractId = ($routeParams.contractId)
+                ? parseInt($routeParams.contractId) : 0;
 
             //populate lists
             $scope.contacts = contactService.getContacts();
