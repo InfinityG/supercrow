@@ -69,6 +69,7 @@
             if (encryptedSecret != null) {
                 $scope.currentWallet.secret = encryptedSecret;
                 walletService.saveWallet($scope.currentWallet);
+                $scope.loadDecryptedWallet();
             }
         };
 

@@ -7,6 +7,7 @@
 
     var configValue = {
         apiHost: 'http://localhost:9000',
+        identityHost: 'http://localhost:9002',
         nacl: '9612700b954743e0b38f2faff35d264c'
     };
 

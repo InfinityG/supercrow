@@ -4,7 +4,7 @@
     <content url="file://$MODULE_DIR$" />
     <orderEntry type="inheritedJdk" />
     <orderEntry type="sourceFolder" forTests="false" />
-    <orderEntry type="library" scope="PROVIDED" name="bundler (v1.7.2, ruby-2.0.0-p451) [gem]" level="application" />
+    <orderEntry type="library" scope="PROVIDED" name="bundler (v1.8.4, ruby-2.0.0-p451) [gem]" level="application" />
     <orderEntry type="library" scope="PROVIDED" name="execjs (v2.2.2, ruby-2.0.0-p451) [gem]" level="application" />
     <orderEntry type="library" scope="PROVIDED" name="json (v1.8.2, ruby-2.0.0-p451) [gem]" level="application" />
     <orderEntry type="library" scope="PROVIDED" name="rake (v10.3.2, ruby-2.0.0-p451) [gem]" level="application" />

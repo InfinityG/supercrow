@@ -1,10 +1,10 @@
 (function () {
 
     var injectParams = ['$scope', '$rootScope', '$location', '$routeParams', 'tokenService', 'contractService',
-                            'contactService'];
+                            'contactService', 'walletService'];
 
     var ContractsController = function ($scope, $rootScope, $location, $routeParams, tokenService, contractService,
-                                        contactService) {
+                                        contactService, walletService) {
 
         $scope.cannedReasons = ['Work Done', 'Goal Achieved', 'Goods Received', 'Recognition', 'Occasion/event'];
 
@@ -32,9 +32,8 @@
         //this is fired after the model and page has loaded
         function setViewContentListener(){
             $scope.$on('$viewContentLoaded', function() {
-                if($scope.currentContract.wallet == null ||
-                    $scope.currentContract.wallet.address == null ||
-                    $scope.currentContract.wallet.secret == null) {
+                var wallet = walletService.getWallet();
+                if(wallet == null || wallet.address == null || wallet.secret == null) {
                     $rootScope.$broadcast('contractEvent', {
                         type: 'Notice',
                         message: "Please update your wallet details",

@@ -7,12 +7,12 @@
 
     var registrationFactory = function ($http, $rootScope, config, keyService, sessionStorageService) {
 
-        var serviceBase = config.apiHost, nacl = config.nacl, factory = {};
+        var identityBase = config.identityHost, nacl = config.nacl, factory = {};
 
         factory.register = function (firstName, lastName, userName, password) {
             var userData = {first_name: firstName, last_name: lastName, username: userName, password: password};
 
-            return $http.post(serviceBase + '/users', userData, {'withCredentials': 'false'})
+            return $http.post(identityBase + '/users', userData, {'withCredentials': 'false'})
                 .then(function (response) {
                     var data = response.data;
 

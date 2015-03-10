@@ -7,7 +7,7 @@
 
     var tokenFactory = function ($http, $location, $rootScope, config, keyService, sessionStorageService) {
 
-        var serviceBase = config.apiHost, nacl = config.nacl, factory = {};
+        var serviceBase = config.apiHost, identityBase = config.identityHost, nacl = config.nacl, factory = {};
 
         factory.getContext = function () {
             return sessionStorageService.getAuthToken();
@@ -18,18 +18,24 @@
         };
 
         factory.login = function (username, password) {
-            var userData = {username: username, password: password};
+            var userData = {username: username, password: password, domain: 'supercrow'};
 
-            return $http.post(serviceBase + '/tokens', userData, {'withCredentials': 'false'})
+            return $http.post(identityBase + '/login', userData, {'withCredentials': 'false'})
                 .then(function (response) {
-                    var data = response.data;
+                    var authData = response.data;
+                    //var auth = data.auth;
+                    //var iv = data.iv;
 
-                    sessionStorageService.saveAuthToken(data.user_id, data.token);
-                    var cryptoKey = keyService.generateAESKey(userData.password, nacl);
+                    $http.post(serviceBase + '/tokens', authData, {'withCredentials': 'false'})
+                        .then(function (response) {
+                            var tokenData = response.data;
+                            sessionStorageService.saveAuthToken(tokenData.user_id, tokenData.token);
+                            var cryptoKey = keyService.generateAESKey(userData.password, nacl);
 
-                    $rootScope.$broadcast('loginEvent', {userId: data.user_id, key: cryptoKey});
+                            $rootScope.$broadcast('loginEvent', {userId: tokenData.user_id, key: cryptoKey});
 
-                    $location.path('/');
+                            $location.path('/');
+                        });
                 });
             //note: errors handled by httpInterceptor
         };
