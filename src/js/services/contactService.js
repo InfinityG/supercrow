@@ -13,7 +13,7 @@
             var userId = tokenService.getContext().userId;
             var result = localStorageService.getContacts(userId);
 
-            if (result == null || result == []) {
+            if (result == null || result.length == 0) {
                 result = factory.getCannedContacts();
                 localStorageService.saveContacts(userId, result);
             }
