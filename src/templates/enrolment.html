@@ -1,0 +1,75 @@
+<section class="section container-fluid">
+    <h1 class="page-header">Login</h1>
+
+    <div class="scrollable">
+        <div class="scrollable-content">
+            <div class="section">
+                <h1>
+                    <span>enrolment</span>
+                </h1>
+
+                <div class="panel panel-default" ng-show="context != null">
+                    <div class="panel-heading">
+                        <div class="fa fa-pencil fa-2x">
+                        </div>
+                        <span class="fa fa-2x pull-right">details</span>
+
+
+                    </div>
+                    <div class="panel-body">
+
+                        <form name="registrationForm">
+                            <div class="input-group input-group-lg">
+                                <span class="input-group-addon fa fa-user"></span>
+                                <input type="text" class="form-control" name="firstName" aria-label="FirstName"
+                                       placeholder="Username" ng-model="firstName"
+                                       ng-minlength="3" ng-maxlength="50" required="true"/>
+                            </div>
+                                    <span style="color:red"
+                                          ng-show="registrationForm.firstName.$dirty && registrationForm.firstName.$invalid">
+                                              Invalid first name (min. 3 characters required)
+                                        </span>
+                            <br/>
+
+                            <div class="btn-group btn-group-lg">
+                                <div class="input-group input-group-lg">
+                                        <span class="input-group-addon dropdown-toggle" ui-turn-on='roleDropdown'>
+                                            <i class="fa fa-ellipsis-v"></i>
+                                        </span>
+                                    <input type="text" class="form-control" placeholder="Select playgroup"
+                                           aria-label="Role" name="role" required="true"
+                                           ng-model="role"/>
+                                </div>
+
+                                <ul class="dropdown-menu"
+                                    ui-outer-click="Ui.turnOff('roleDropdown')"
+                                    ui-outer-click-if="Ui.active('roleDropdown')"
+                                    role="menu"
+                                    ui-show="roleDropdown"
+                                    ui-state="roleDropdown"
+                                    ui-turn-off="roleDropdown">
+
+                                    <li ng-repeat="role in roles" ng-click="roleSelected(role);">
+                                        <a>{{role}}</a>
+                                    </li>
+                                </ul>
+                            </div>
+                                     <span style="color:red"
+                                           ng-show="registrationForm.role.$dirty && registrationForm.role.$invalid">
+                                              Invalid role
+                                        </span>
+                            <br/>
+
+                            <button type="button" ng-show="registrationForm.$valid"
+                                    class="btn btn-default btn-lg pull-right"
+                                    ng-click="register(firstName, lastName, userName, password, mobile, role);">register
+                            </button>
+                        </form>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <modal redirect='true'></modal>
+</section>

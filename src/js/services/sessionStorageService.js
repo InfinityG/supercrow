@@ -13,13 +13,14 @@
             return JSON.parse(sessionStorage.getItem('superCrow.token'));
         };
 
-        factory.saveAuthToken = function(userId, token){
-            return sessionStorage.setItem('superCrow.token', JSON.stringify({userId: userId, token: token}));
+        factory.saveAuthToken = function(username, userId, externalId, token){
+            return sessionStorage.setItem('superCrow.token', JSON.stringify({username: username, userId: userId,
+                                            externalId : externalId, token: token}));
         };
 
         factory.deleteAuthToken = function(){
             return sessionStorage.removeItem('superCrow.token');
-        };
+        }
 
         return factory;
     };

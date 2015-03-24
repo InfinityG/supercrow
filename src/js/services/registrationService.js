@@ -3,16 +3,20 @@
  */
 (function () {
 
-    var injectParams = ['$http', '$rootScope', 'config', 'keyService', 'sessionStorageService'];
+    var injectParams = ['$http', '$rootScope', 'config', 'tokenService', 'keyService', 'sessionStorageService'];
 
-    var registrationFactory = function ($http, $rootScope, config, keyService, sessionStorageService) {
+    var registrationFactory = function ($http, $rootScope, config, tokenService, keyService, sessionStorageService) {
 
         var identityBase = config.identityHost, nacl = config.nacl, factory = {};
 
-        factory.register = function (firstName, lastName, userName, password) {
-            var userData = {first_name: firstName, last_name: lastName, username: userName, password: password};
+        factory.register = function (firstName, lastName, userName, password, mobile, role) {
 
-            return $http.post(identityBase + '/users', userData, {'withCredentials': 'false'})
+            var registrar = tokenService.getContext().username;
+
+            var userData = {first_name: firstName, last_name: lastName, username: userName, password: password,
+                                mobile_number: mobile, confirm_mobile: false, role: role, registrar: registrar};
+
+            return $http.post(identityBase + '/users', userData, {'withCredentials': false})
                 .then(function (response) {
                     var data = response.data;
 
@@ -26,7 +30,7 @@
                     });
 
                     //emit this to be used for encrypting newly generated secret signing keys
-                    $rootScope.$broadcast('registrationEvent', {userId: data.user_id, key: cryptoKey});
+                    $rootScope.$broadcast('registrationEvent', {userId: data.id, key: cryptoKey});
                 });
         };
 

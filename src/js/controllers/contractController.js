@@ -1,113 +1,109 @@
 (function () {
 
     var injectParams = ['$scope', '$rootScope', '$location', '$routeParams', 'tokenService', 'contractService',
-                            'contactService', 'walletService'];
+        'contactService', 'walletService'];
 
     var ContractsController = function ($scope, $rootScope, $location, $routeParams, tokenService, contractService,
                                         contactService, walletService) {
 
-        $scope.cannedReasons = ['Work Done', 'Goal Achieved', 'Goods Received', 'Recognition', 'Occasion/event'];
-
         $scope.contacts = null;
-        $scope.currentReceiver = null;
+        $scope.contactGroups = ['coaches', 'leaders', 'facilitators', 'caregivers'];
+        $scope.currentContactGroup = null;
 
-        $scope.oracles = null;
-        $scope.currentOracle = null;
+        $scope.currentReceivers = null;
+        $scope.currentReceiverFullName = null;
+
+        //$scope.oracles = null;
+        //$scope.currentOracle = null;
+
+        $scope.currentContract = null;
+        $scope.contractType = null;
+        $scope.signatureQuantity = null;
+        $scope.currentPaymentAmount = {value:null};
 
         $scope.savedContracts = null;
         $scope.submittedContracts = null;
-        $scope.currentContract = null;
+
+        $scope.daysOfWeek = {monday: false, tuesday : false, wednesday : false, thursday : false, friday : false};
 
         function init() {
             var context = tokenService.getContext();
 
-            if(context == null || context == '') {
+            if (context == null || context == '')
                 $location.path('/login');
-            }else {
-                setViewContentListener();
+            else
                 loadData();
-            }
-        }
-
-        //this is fired after the model and page has loaded
-        function setViewContentListener(){
-            $scope.$on('$viewContentLoaded', function() {
-                var wallet = walletService.getWallet();
-                if(wallet == null || wallet.address == null || wallet.secret == null) {
-                    $rootScope.$broadcast('contractEvent', {
-                        type: 'Notice',
-                        message: "Please update your wallet details",
-                        status: 0,
-                        redirectUri:'/settings'
-                    });
-                }
-            });
         }
 
         function loadData() {
-            var contractId = ($routeParams.contractId)
-                ? parseInt($routeParams.contractId) : 0;
+            if ($routeParams.type)
+                $scope.contractType = $routeParams.type;
 
             //populate lists
             $scope.contacts = contactService.getContacts();
-            $scope.savedContracts = contractService.getSavedContracts();
-            $scope.submittedContracts = contractService.getSubmittedContracts();
-
-            if (contractId > 0) {
-                //get the current contract
-                $scope.currentContract = contractService.getContract(contractId);
-
-                //get the current receiver and oracle
-                var receiverId = $scope.currentContract.participants[1].external_id;
-                var oracleId = $scope.currentContract.participants[2].external_id;
-
-                for (var x = 0; x < $scope.contacts.length; x++) {
-                    if ($scope.contacts[x].id == receiverId)
-                        $scope.currentReceiver = $scope.contacts[x];
-                    if ($scope.contacts[x].id == oracleId)
-                        $scope.currentOracle = $scope.contacts[x];
-                }
-            } else {
-                //new contract
-                $scope.currentContract = getContractTemplate();
-                $scope.currentReceiver = null;
-                $scope.currentOracle = null;
-            }
+            $scope.currentContract = getContractTemplate();
+            $scope.currentReceivers = null;
+            $scope.currentOracle = null;
+            $scope.currentReceivers = $scope.getCurrentReceivers('facilitators');
         }
 
         function getContractTemplate() {
-            return contractService.getContractTemplate();
+            return contractService.getBaseContractTemplate();
         }
 
-        $scope.oracleSelected = function (oracle) {
-            $scope.currentOracle = oracle;
-            $scope.currentContract.participants[2].external_id = oracle.id;
-            $scope.currentContract.participants[2].wallet.address = oracle.walletAddress;
-            $scope.currentContract.participants[2].public_key = oracle.publicKey;
+        $scope.getCurrentReceivers = function (group) {
+            $scope.currentContactGroup = group;
+            var result = [];
+
+            for (var x = 0; x < $scope.contacts.length; x++) {
+                var contact = $scope.contacts[x];
+
+                if ((contact.role == 'coach' && group == 'coaches') ||
+                    (contact.role == 'leader' && group == 'leaders') ||
+                    (contact.role == 'facilitator' && group == 'facilitators') ||
+                    (contact.role == 'caregiver' && group == 'caregiver'))
+                    result.push(contact);
+            }
+
+            return result;
         };
 
-        $scope.reasonSelected = function (reason) {
-            $scope.currentContract.conditions[0].name = reason;
-            $scope.currentContract.conditions[0].description = reason;
+        $scope.signatureQuantityChanged = function (qty) {
+            $scope.signatureQuantity = qty;
         };
+
+        //$scope.oracleSelected = function (oracle) {
+        //    $scope.currentOracle = oracle;
+        //    $scope.currentContract.participants[2].external_id = oracle.id;
+        //    $scope.currentContract.participants[2].wallet.address = oracle.walletAddress;
+        //    $scope.currentContract.participants[2].public_key = oracle.publicKey;
+        //};
+
+        //$scope.reasonSelected = function (reason) {
+        //    $scope.currentContract.conditions[0].name = reason;
+        //    $scope.currentContract.conditions[0].description = reason;
+        //};
 
         $scope.contractSelected = function (contract) {
             $scope.currentContract = contract;
         };
 
-        $scope.receiverSelected = function (contact) {
-            $scope.currentReceiver = contact;
-            $scope.currentContract.participants[1].external_id = contact.id;
-            $scope.currentContract.participants[1].wallet.address = contact.walletAddress;
-            $scope.currentContract.participants[1].public_key = contact.publicKey;
-        };
+        //$scope.receiverSelected = function (contact) {
+        //    $scope.currentReceiver = contact;
+        //    $scope.currentContract.participants[1].external_id = contact.id;
+        //    $scope.currentContract.participants[1].wallet.address = contact.walletAddress;
+        //    $scope.currentContract.participants[1].public_key = contact.publicKey;
+        //
+        //    $scope.currentReceiverFullName = contact.first_name + ' ' + contact.last_name;
+        //};
 
         $scope.saveContract = function (contract) {
-            contractService.saveContract(contract);
+            contractService.createFacilitationContracts($scope.contractType, $scope.currentReceivers,
+                $scope.signatureQuantity, $scope.daysOfWeek, $scope.currentPaymentAmount.value, contract);
         };
 
         $scope.sendContract = function (contract) {
-                contractService.sendContract(contract);
+            contractService.sendContract(contract);
         };
 
         $scope.deleteContract = function (contract) {

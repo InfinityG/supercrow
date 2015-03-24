@@ -46,7 +46,7 @@
                 type: 'Success',
                 status: 0,
                 message: "Contract '" + contract.name + "' saved",
-                redirectUri : '/'
+                redirectUri: '/'
             });
         };
 
@@ -59,7 +59,7 @@
                 type: 'Success',
                 status: 0,
                 message: "Contract '" + contract.name + "' updated'",
-                redirectUri : '/'
+                redirectUri: '/'
             });
         };
 
@@ -72,7 +72,7 @@
                 type: 'Success',
                 status: 0,
                 message: "Contract '" + contract.name + "' deleted",
-                redirectUri : '/'
+                redirectUri: '/'
             });
         };
 
@@ -92,7 +92,7 @@
                             type: 'Success',
                             status: response.status,
                             message: "Contract '" + contract.name + "' saved",
-                            redirectUri : '/'
+                            redirectUri: '/'
                         });
                     });
             }
@@ -145,11 +145,11 @@
                 type: 'Error',
                 status: 0,
                 message: "Contract could not be found",
-                redirectUri:'/'
+                redirectUri: '/'
             });
         };
 
-        factory.getContractTemplate = function () {
+        factory.getBaseContractTemplate = function () {
             var userId = tokenService.getContext().userId;
 
             var creatorSigningPair = keyService.getSigningKeyPair();
@@ -170,7 +170,7 @@
                 expires: '',
                 participants: [
                     {
-                        external_id: 1,
+                        external_id: userId,
                         public_key: creatorPublicSigningKey,
                         roles: ['initiator', 'sender'],
                         wallet: {
@@ -181,51 +181,19 @@
                                 threshold: 2
                             }
                         }
-                    },
-                    {
-                        external_id: 2,
-                        public_key: '',
-                        roles: ['receiver'],
-                        wallet: {
-                            address: '',
-                            destination_tag: '',
-                            secret: null
-                        }
-                    },
-                    {
-                        external_id: 3,
-                        public_key: '',
-                        roles: ['oracle'],
-                        wallet: {
-                            address: '',
-                            destination_tag: '',
-                            secret: null
-                        }
                     }
+                    //{
+                    //    external_id: 2,
+                    //    public_key: '',
+                    //    roles: ['oracle'],
+                    //    wallet: {
+                    //        address: '',
+                    //        destination_tag: '',
+                    //        secret: null
+                    //    }
+                    //}
                 ],
-                conditions: [
-                    {
-                        name: '',
-                        description: '',
-                        expires: '',
-                        sequence_number: 1,
-                        signatures: [{
-                            participant_external_id: 3,
-                            type: 'ss_key',
-                            delegated_by_external_id: 1
-                        }],
-                        trigger: {
-                            transactions: [
-                                {
-                                    "from_participant_external_id": 1,
-                                    "to_participant_external_id": 2,
-                                    "amount": null,
-                                    "currency": 'XRP'
-                                }
-                            ]
-                        }
-                    }
-                ],
+                conditions: [],
                 signatures: [
                     {
                         participant_external_id: 1,
@@ -235,6 +203,86 @@
                     }
                 ]
             };
+        };
+
+        factory.createFacilitationContracts = function (contractType, facilitators, sigQty, daysOfWeek, amount, baseContract) {
+
+            console.debug('Amount: ' + amount);
+
+            // get selected days
+            var daysArr = [];
+            for (var property in daysOfWeek) {
+                if (daysOfWeek.hasOwnProperty(property)) {
+                    if (daysOfWeek[property] == true) {
+                        daysArr.push(property);
+                        console.debug(property);
+                    }
+                }
+            }
+
+            // we need 1 contract per recipient (ie: per facilitator)
+            for (var x = 0; x < facilitators.length; x++) {
+               // clone the baseContract
+                var facilitatorContract = JSON.parse(JSON.stringify(baseContract));
+
+                var currentRecipient = facilitators[x];
+
+                var receiverParticipant = {
+                    external_id: currentRecipient.id,
+                    public_key: currentRecipient.publicKey,
+                    roles: ['receiver'],
+                    wallet: {
+                        address: '',
+                        destination_tag: '',
+                        secret: null
+                    }
+                };
+
+                facilitatorContract.participants.push(receiverParticipant);
+
+                if (contractType == 'facilitation') {
+                    // each contract has (daysOfWeek) conditions (no of days to run playgroup)
+                    for (var z = 0; z < daysArr.length; z++) {
+
+                        // each condition is signed by (sigQty) no of caregivers
+                        var signatures = [];
+                        for (var s = 0; s < sigQty; s++) {
+                            signatures.push({
+                                participant_external_id: currentRecipient.id,
+                                type: 'ecdsa'
+                            });
+                        }
+
+                        var condition = {
+                            name: 'Playgroup facilitation for ' + daysArr[z],
+                            description: 'Facilitating a playgroup',
+                            expires: facilitatorContract.expires,
+                            sequence_number: z + 1,
+                            signatures: signatures,
+                            trigger: {
+                                //transactions: [
+                                //    {
+                                //        from_participant_external_id: baseContract.userId,
+                                //        to_participant_external_id: currentRecipient.id,
+                                //        amount: amount,
+                                //        currency: "PDC"
+                                //    }
+                                //]
+                                webhooks: [
+                                    {
+                                        "uri": "www.mywebhook1.com",
+                                        "payload": {"amount": amount, "participant_id": currentRecipient.id}
+                                    }
+                                ]
+                            }
+                        };
+
+                        facilitatorContract.conditions.push(condition);
+                    }
+                }
+
+                factory.saveContract(facilitatorContract);
+            }
         };
 
         factory.getSharedSecret = function () {

@@ -20,19 +20,19 @@
         factory.login = function (username, password) {
             var userData = {username: username, password: password, domain: 'supercrow'};
 
-            return $http.post(identityBase + '/login', userData, {'withCredentials': 'false'})
+            return $http.post(identityBase + '/login', userData, {'withCredentials': false})
                 .then(function (response) {
                     var authData = response.data;
                     //var auth = data.auth;
                     //var iv = data.iv;
 
-                    $http.post(serviceBase + '/tokens', authData, {'withCredentials': 'false'})
+                    $http.post(serviceBase + '/tokens', authData, {'withCredentials': false})
                         .then(function (response) {
                             var tokenData = response.data;
-                            sessionStorageService.saveAuthToken(tokenData.user_id, tokenData.token);
+                            sessionStorageService.saveAuthToken(username, tokenData.external_id, tokenData.token);
                             var cryptoKey = keyService.generateAESKey(userData.password, nacl);
 
-                            $rootScope.$broadcast('loginEvent', {userId: tokenData.user_id, key: cryptoKey});
+                            $rootScope.$broadcast('loginEvent', {username: username, userId: tokenData.external_id, key: cryptoKey});
 
                             $location.path('/');
                         });

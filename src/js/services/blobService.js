@@ -15,8 +15,10 @@
         };
 
         factory.saveBlob = function (blob) {
-            var userId = tokenService.getContext().userId;
-            localStorageService.saveBlob(userId, blob);
+            var context = tokenService.getContext();
+            var userId = context.userId;
+
+            localStorageService.saveBlob(userId,blob);
         };
 
         // generate a new local blob after a userId is received from registration process

@@ -110,7 +110,13 @@
 
         factory.getContacts = function (userId) {
             var blob = factory.getBlob(userId);
-            return blob.contacts;
+            var result = blob.contacts;
+
+            result.sort(function (a, b) {
+                return a.name > b.name;
+            });
+
+            return result;
         };
 
         factory.saveContacts = function (userId, contacts) {

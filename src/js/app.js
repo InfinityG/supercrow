@@ -7,13 +7,17 @@
         $httpProvider.interceptors.push('httpInterceptor');
 
         $routeProvider
-            .when('/contract/:contractId?', {
+            .when('/contract/type/:type?', {
+                controller: 'ContractsController',
+                templateUrl: 'contract.html',
+                reloadOnSearch: false
+            }).when('/contract/:contractId?', {
                 controller: 'ContractsController',
                 templateUrl: 'contract.html',
                 reloadOnSearch: false
             })
             .when('/contracts', {
-                controller: 'ContractsController',
+                controller: 'MyContractsController',
                 templateUrl: 'contractList.html',
                 reloadOnSearch: false
             })

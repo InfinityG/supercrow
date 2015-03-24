@@ -3,48 +3,33 @@
  */
 (function () {
 
-    var injectParams = ['$http', 'tokenService', 'localStorageService'];
+    var injectParams = ['$http', 'config', 'tokenService', 'localStorageService'];
 
-    var contactFactory = function ($http, tokenService, localStorageService) {
+    var contactFactory = function ($http, config, tokenService, localStorageService) {
 
-        var factory = {};
+        var identityBase = config.identityHost, factory = {};
 
         factory.getContacts= function() {
-            var userId = tokenService.getContext().userId;
+            var context = tokenService.getContext();
+            var username = context.username;
+            var userId = context.userId;
+
             var result = localStorageService.getContacts(userId);
 
-            if (result == null || result == []) {
-                result = factory.getCannedContacts();
-                localStorageService.saveContacts(userId, result);
+            if (result == null || result.length == 0) {
+                result = factory.refreshContacts(userId, username);
             }
 
             return result;
         };
 
-        factory.getCannedContacts = function(){
-            return [
-                {
-                    id: 1,
-                    name: 'Shaun Conway',
-                    email: 'shaun@resultslab.co',
-                    publicKey: 'A14blB1UGo9SA/x0n0rIe0kOtW/27a2+ZAQu5t1L1mEr',
-                    walletAddress: 'rG1QQv2nh2gr7RCZ1P8YYcBUKCCN633jCn'
-                },
-                {
-                    id: 2,
-                    name: 'Sam Surka',
-                    email: 'sam@resultslab.co',
-                    publicKey: 'A14blB1UGo9SA/x0n0rIe0kOtW/27a2+ZAQu5t1L1mEr',
-                    walletAddress: 'rG1QQv2nh2gr7RCZ1P8YYcBUKCCN633jCn'
-                },
-                {
-                    id: 3,
-                    name: 'John Doe',
-                    email: 'john@doe.me',
-                    publicKey: 'A14blB1UGo9SA/x0n0rIe0kOtW/27a2+ZAQu5t1L1mEr',
-                    walletAddress: 'rG1QQv2nh2gr7RCZ1P8YYcBUKCCN633jCn'
-                }
-            ];
+        factory.refreshContacts = function(userId, username){
+            return $http.get(identityBase + '/users/associations/' + username, {'withCredentials': false})
+                .then(function (response) {
+                    var data = response.data;
+                    localStorageService.saveContacts(userId, data);
+                    return data;
+                });
         };
 
         return factory;

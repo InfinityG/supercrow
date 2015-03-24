@@ -1,11 +1,52 @@
-<h1 class="app-name">Supercrow</h1>
-
 <div class="scrollable">
-  <h1 class="scrollable-header app-name">Supercrow</h1>  
-  <div class="scrollable-content">
-    <div class="list-group" ui-turn-off='uiSidebarLeft'>
-      <a class="list-group-item" href="#/contract">Create a Contract<i class="fa fa-chevron-right pull-right"></i></a>
-      <a class="list-group-item" href="#/contracts">Your Contracts<i class="fa fa-chevron-right pull-right"></i></a>
+    <div class="scrollable-content">
+    <div class="logo">
+        <!--<img src="../fonts/DGMT-wht.svg" scale="0" class="center-block logo"/>-->
+        <svg version="1.1" id="Layer_1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" x="0px" y="0px"
+	 width="121.417px" height="40px" viewBox="0 4.333 121.417 40" enable-background="new 0 4.333 121.417 40" xml:space="preserve">
+        <g>
+            <path fill="#FFFFFF" d="M28.212,23.807c0,5.851-2.59,12.094-11.544,12.094c-1.177,0-3.023,0-4.437-0.078V12.654
+                c0.863-0.157,3.533-0.079,4.987-0.079C25.346,12.576,28.212,18.938,28.212,23.807z M7.439,10.887
+                c0.629,0.314,1.022,0.865,1.022,1.767v23.168c0,0.864-0.393,1.413-1.022,1.77h9.032c11.192,0,15.825-7.5,15.825-13.784
+                c0-3.417-2.042-12.92-15.078-12.92H7.439z"></path>
+            <path fill="#FFFFFF" d="M78.037,30.937l-8.641-20.144h-5.301c0.668,0.314,1.219,1.021,1.219,1.767v23.169
+                c0,0.862-0.393,1.413-1.022,1.767h3.966c-0.627-0.354-1.099-0.904-1.099-1.767V16.055c0-0.354-0.079-1.022-0.079-1.022l0.354,1.022
+                l9.502,21.991l9.7-22.62l0.275-0.902c0,0-0.078,0.431-0.078,0.823v20.382c0,0.862-0.394,1.413-1.022,1.767h5.812
+                c-0.627-0.354-1.021-0.904-1.021-1.767V12.56c0-0.904,0.393-1.453,1.021-1.767h-5.065L78.037,30.937z"></path>
+            <path fill="#FFFFFF" d="M112.297,12.678c1.021,0.079,1.65,0.902,2.043,1.531l-0.041-3.417H93.645v3.417
+                c0.354-0.629,1.099-1.531,2.042-1.531c0,0,3.495-0.275,6.439-0.275v23.326c0,0.862-0.354,1.413-1.021,1.767h5.812
+                c-0.629-0.354-1.021-0.904-1.021-1.767V12.403C108.764,12.403,112.297,12.678,112.297,12.678z"></path>
+            <path fill="#FFFFFF" d="M49.552,10.533c-10.052,0-15.12,7.108-15.12,13.785c0,8.207,6.913,13.626,14.648,13.626
+                c2.944,0,8.404-1.021,11.664-3.022c-0.04-0.08-0.55-0.865-0.55-1.688V28.01c0-0.865,0.432-1.415,1.06-1.767h-5.811
+                c0.588,0.352,1.021,0.902,1.021,1.767v6.36c-2.552,1.729-5.537,1.846-6.715,1.846c-8.207,0-11.192-6.753-11.192-12.408
+                c0-6.363,3.809-11.625,11.349-11.625c1.846,0,7.147,0.865,9.229,6.48c0-0.078-0.275-5.891-0.275-5.891
+                C55.718,11.438,52.772,10.533,49.552,10.533z"></path>
+        </g>
+        </svg>
     </div>
-  </div>
+        <!--<div class="title">ecd contract manager</div>-->
+    <!--</div>-->
+
+        <div class="list-group" ui-turn-off='uiSidebarLeft'>
+            <div class="list-group-item"><h3>Contracts</h3></div>
+            <div class="list-group-item"><h4>Create</h4></div>
+            <a class="list-group-item" href="#/contract/type/facilitation">&nbsp;Playgroup facilitation<i class="fa fa-chevron-right pull-right"></i></a>
+            <a class="list-group-item" href="#/contract/type/registration">&nbsp;Caregiver/child registration<i class="fa fa-chevron-right pull-right"></i></a>
+            <a class="list-group-item" href="#/contract/type/enrolment">&nbsp;Playgroup enrolment<i class="fa fa-chevron-right pull-right"></i></a>
+            <div class="list-group-item"><h4>View</h4></div>
+            <a class="list-group-item" href="#/contracts">&nbsp;Your Contracts<i class="fa fa-chevron-right pull-right"></i></a>
+        </div>
+        <div class="list-group" ui-turn-off='uiSidebarLeft'>
+            <div class="list-group-item"><h3>Registration</h3></div>
+            <a class="list-group-item" href="#/login">&nbsp;Create new identity<i class="fa fa-chevron-right pull-right"></i></a>
+        </div>
+        <div class="list-group" ui-turn-off='uiSidebarLeft'>
+            <div class="list-group-item"><h3>Enrolment</h3></div>
+            <a class="list-group-item" href="#/enrolments">&nbsp;Enrol caregiver<i class="fa fa-chevron-right pull-right"></i></a>
+        </div>
+        <div class="list-group" ui-turn-off='uiSidebarLeft'>
+            <div class="list-group-item"><h3>Playgroup attendance</h3></div>
+            <a class="list-group-item" href="#/attendances">&nbsp;Confirm attendance<i class="fa fa-chevron-right pull-right"></i></a>
+        </div>
+    </div>
 </div>

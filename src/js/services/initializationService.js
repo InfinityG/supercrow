@@ -8,6 +8,7 @@
     var configValue = {
         apiHost: 'http://localhost:9000',
         identityHost: 'http://localhost:9002',
+        //identityHost: 'http://54.154.155.144:9002',
         nacl: '9612700b954743e0b38f2faff35d264c'
     };
 
@@ -20,6 +21,8 @@
         };
 
         factory.start = function(key){
+            $http.defaults.withCredentials = false; //this is so that we can use '*' in allowed-origin
+
             var context = tokenService.getContext();
 
             if(context != null){
@@ -30,7 +33,7 @@
 
         factory.initializeAuthHeaders = function(context){
             $http.defaults.headers.common['Authorization'] = context.token;
-            $http.defaults.withCredentials = true;
+            //$http.defaults.withCredentials = true;
         };
 
         factory.initializeBlob = function(key){
