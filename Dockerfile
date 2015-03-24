@@ -5,7 +5,7 @@ MAINTAINER Grant Pidwell <grantpidwell@infinity-g.com>
 
 RUN apt-get install -y software-properties-common
 RUN add-apt-repository ppa:chris-lea/node.js
-RUN apt-get update && apt-get install -y -g curl wget git nodejs
+RUN apt-get update && apt-get install -y curl wget git nodejs
 RUN npm install bower -g
 RUN npm install gulp -g
 
@@ -21,7 +21,7 @@ RUN echo "Host github.com\n\tStrictHostKeyChecking no\n" >> /root/.ssh/config
 #### Clone Github repo ####
 
 RUN mkdir -p home
-RUN git clone git@github.com:InfinityG/supercrow.git /home/supercrow
+RUN git clone -b dgmt-demo git@github.com:InfinityG/supercrow.git /home/supercrow
 
 # Install npm dependencies; bower dependencies
 # NOTE: Make sure that an outgoing port is open on the firewall to allow
