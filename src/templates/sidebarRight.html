@@ -4,16 +4,14 @@
         <!--<div>-->
             <!--<img src="../images/9needs.jpeg" class="center-block logo"/>-->
         <!--</div>-->
-        <div class="section" ui-turn-off='uiSidebarRight'>
+        <div class="section">
             <!--<div class="list-group" >-->
-            <div class="panel panel-default">
+            <div class="panel panel-default" ng-show="" ui-turn-off='uiSidebarRight'>
 
                 <div class="panel-heading">
                     <div class="fa fa-question-circle fa-2x">
                     </div>
-                    <span class="fa fa-2x pull-right">help</span>
-
-
+                    <span class="fa fa-2x pull-right">additional info</span>
                 </div>
                 <div class="panel-body">
                     <div class="responsive-video">
@@ -24,6 +22,123 @@
                                 href="https://vimeo.com/bcdschool">Beaver Country Day School</a> on <a
                                 href="https://vimeo.com">Vimeo</a>.</p>
                     </div>
+                </div>
+            </div>
+
+            <div class="panel panel-default">
+
+                <div class="panel-heading" ui-turn-off='uiSidebarRight'>
+                    <div class="fa fa-chevron-right fa-2x">
+                    </div>
+                    <span class="fa fa-2x pull-right">details</span>
+                </div>
+                <div class="panel-body">
+                    <form name="registrationForm">
+
+                        <div class="btn-group btn-group-lg">
+                            <div class="input-group input-group-lg">
+                                        <span class="input-group-addon dropdown-toggle" ui-turn-on='genderDropdown'>
+                                            <i class="fa fa-ellipsis-v"></i>
+                                        </span>
+                                <input type="text" class="form-control" placeholder="Select role"
+                                       aria-label="Role" name="role" required="true"
+                                       ng-model="role"/>
+                            </div>
+
+                            <ul class="dropdown-menu"
+                                ui-outer-click="Ui.turnOff('genderDropdown')"
+                                ui-outer-click-if="Ui.active('genderDropdown')"
+                                role="menu"
+                                ui-show="genderDropdown"
+                                ui-state="genderDropdown"
+                                ui-turn-off="genderDropdown">
+
+                                <li ng-repeat="i in ['male', 'female'] track by $index">
+                                    <!--<a ng-click="signatureQuantityChanged($index + 1);">{{$index + 1}}</a>-->
+                                </li>
+                            </ul>
+                        </div>
+
+                        <br/>
+
+                        <div class="input-group input-group-lg">
+                            <span class="input-group-addon fa fa-user"></span>
+                            <input type="text" class="form-control" name="firstName" aria-label="FirstName"
+                                   placeholder="First Name" ng-model="firstName"
+                                   ng-minlength="3" ng-maxlength="50" required="true"/>
+                        </div>
+                                    <span style="color:red"
+                                          ng-show="registrationForm.firstName.$dirty && registrationForm.firstName.$invalid">
+                                              Invalid first name (min. 3 characters required)
+                                        </span>
+                        <br/>
+
+                        <div class="input-group input-group-lg">
+                            <span class="input-group-addon fa fa-user"></span>
+                            <input type="text" class="form-control" aria-label="LastName" name="lastName"
+                                   placeholder="Last Name" ng-model="lastName" ng-minlength="3"
+                                   ng-maxlength="50"
+                                   required="true"/>
+
+                        </div>
+                                     <span style="color:red"
+                                           ng-show="registrationForm.lastName.$dirty && registrationForm.lastName.$invalid">
+                                              Invalid last name (min. 3 characters required)
+                                        </span>
+                        <br/>
+
+                        <div class="input-group input-group-lg">
+                            <span class="input-group-addon fa fa-envelope"></span>
+                            <input type="email" class="form-control" aria-label="Email" name="userName"
+                                   placeholder="Email" ng-model="userName" required="true"/>
+
+                        </div>
+                                    <span style="color:red"
+                                          ng-show="registrationForm.userName.$dirty && registrationForm.userName.$invalid">
+                                              Invalid email
+                                        </span>
+                        <br/>
+
+                        <div class="input-group input-group-lg">
+                            <span class="input-group-addon fa fa-key"></span>
+                            <input type="password" class="form-control" aria-label="Password"
+                                   name="password"
+                                   placeholder="Password" ng-model="password" required="true"
+                                   ng-minlength="5" ng-maxlength="20"/>
+
+                        </div>
+                                     <span style="color:red"
+                                           ng-show="registrationForm.password.$dirty && registrationForm.password.$invalid">
+                                              Invalid password
+                                        </span>
+                        <br/>
+
+                        <div class="input-group input-group-lg">
+                            <span class="input-group-addon fa fa-mobile-phone"></span>
+                            <input type="text" class="form-control" aria-label="Phone"
+                                   name="mobile"
+                                   placeholder="Mobile number" ng-model="mobile" required="true"
+                                   ng-minlength="5" ng-maxlength="20"/>
+
+                        </div>
+                                     <span style="color:red"
+                                           ng-show="registrationForm.mobile.$dirty && registrationForm.mobile.$invalid">
+                                              Invalid mobile number
+                                        </span>
+                        <br/>
+
+
+                                     <span style="color:red"
+                                           ng-show="registrationForm.role.$dirty && registrationForm.role.$invalid">
+                                              Invalid role
+                                        </span>
+                        <br/>
+
+                        <button type="button" ng-show="registrationForm.$valid"
+                                class="btn btn-default btn-lg pull-right"
+                                ng-click="register(firstName, lastName, userName, password, mobile, role);">register
+                        </button>
+                    </form>
                 </div>
             </div>
             <!--</div>-->

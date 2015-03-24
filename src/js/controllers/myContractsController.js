@@ -126,7 +126,7 @@
         init();
     };
 
-    ContractsController.$inject = injectParams;
+    MyContractsController.$inject = injectParams;
 
     angular.module('superCrow').controller('MyContractsController', MyContractsController);
 

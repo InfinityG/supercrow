@@ -4,17 +4,17 @@
     <div class="scrollable">
         <div class="scrollable-content">
             <div class="section">
-                <h1>
+                <h3>
                     <span ng-show="context == null;">log in</span>
                     <span ng-show="context != null;">register</span>
-                </h1>
+                </h3>
 
                 <div class="panel panel-default" ng-show="context == null;">
 
                     <div class="panel-heading">
                         <div class="fa fa-sign-in fa-2x">
                         </div>
-                        <span class="fa fa-2x pull-right">login</span>
+                        <span class="fa fa-2x pull-left">login</span>
 
 
                     </div>
@@ -52,12 +52,10 @@
                 </div>
 
                 <div class="panel panel-default" ng-show="context != null">
-                    <div class="panel-heading">
-                        <div class="fa fa-pencil fa-2x">
-                        </div>
-                        <span class="fa fa-2x pull-right">details</span>
-
-
+                    <div class="panel-heading justified">
+                        <span class="fa fa-pencil fa-2x"></span>
+                        <span class="fa fa-2x text-center">person</span>
+                        <span class="fa fa-chevron-right fa-2x text-right" ui-toggle="uiSidebarRight"></span>
                     </div>
                     <div class="panel-body">
 

@@ -4,14 +4,14 @@
     <div class="scrollable">
         <div class="scrollable-content" ng-model="newContract">
             <div class="section">
-                <h2><span ng-show="currentContract.id != null"> sent contract</span>
+                <h3><span ng-show="currentContract.id != null"> sent contract</span>
                     <span ng-show="currentContract.external_id == 0">
-                        <span ng-show="contractType == 'facilitation'">new facilitation contract</span>
-                        <span ng-show="contractType == 'registration'">new registration contract</span>
-                        <span ng-show="contractType == 'enrolment'">new enrolment contract</span>
+                        <span ng-show="contractType == 'facilitation'">new playgroup agreement</span>
+                        <span ng-show="contractType == 'registration'">new registration agreement</span>
+                        <span ng-show="contractType == 'enrolment'">new enrolment agreement</span>
                     </span>
                     <span ng-show="(currentContract.external_id > 1) && (currentContract.id == null)"> saved contract</span>
-                </h2>
+                </h3>
 
                 <form name="contractForm" novalidate>
                     <div class="panel-group" ui-state='myAccordion' ui-default='1'>
@@ -21,7 +21,7 @@
 
                             <div class="panel-heading justified" ui-set="{'myAccordion': 1}">
                                 <span class="fa fa-pencil fa-2x"></span>
-                                <span class="fa fa-2x text-center">name</span>
+                                <span class="fa fa-2x text-center">title</span>
                                 <span class="fa fa-chevron-right fa-2x text-right" ui-toggle="uiSidebarRight"></span>
                             </div>
 
@@ -30,7 +30,7 @@
                                     <div class="input-group input-group-lg">
                                         <span class="input-group-addon fa fa-pencil"></span>
                                         <input type="text" class="form-control" name="name" aria-label="Name"
-                                               placeholder="Contract name" ng-model="currentContract.name"
+                                               placeholder="Name" ng-model="currentContract.name"
                                                ng-minlength=3 ng-maxlength=100 required="true"
                                                ng-disabled="currentContract.id != null"/>
                                          <span class="input-group-addon"
@@ -45,7 +45,7 @@
                                         <span class="input-group-addon fa fa-pencil"></span>
                                         <input type="text" class="form-control" name="description"
                                                aria-label="Description"
-                                               placeholder="Contract description"
+                                               placeholder="Description"
                                                ng-model="currentContract.description"
                                                ng-minlength=3 ng-maxlength=200 required="true"
                                                ng-disabled="currentContract.id != null"/>
@@ -64,8 +64,8 @@
 
                             <div class="panel-heading justified" ui-set="{'myAccordion': 2}">
                                 <span class="fa fa-money fa-2x"></span>
-                                <span class="fa fa-2x text-center">pay</span>
-                                <span class="fa fa-question-circle fa-2x text-right" ui-toggle="uiSidebarRight"></span>
+                                <span class="fa fa-2x text-center">transfer value</span>
+                                <span class="fa fa-chevron-right fa-2x text-right" ui-toggle="uiSidebarRight"></span>
                             </div>
 
                             <div ui-if="myAccordion == 2" ui-scope-context='2'>
@@ -92,8 +92,8 @@
 
                             <div class="panel-heading justified" ui-set="{'myAccordion': 3}">
                                 <span class="fa fa-user fa-2x"></span>
-                                <span class="fa fa-2x text-center">who</span>
-                                <span class="fa fa-question-circle fa-2x text-right" ui-toggle="uiSidebarRight"></span>
+                                <span class="fa fa-2x text-center">between</span>
+                                <span class="fa fa-chevron-right fa-2x text-right" ui-toggle="uiSidebarRight"></span>
                             </div>
 
                             <div ui-if="myAccordion == 3" ui-scope-context='3'>
@@ -111,9 +111,9 @@
                                         <!--<div class="fa fa-exclamation-triangle"></div>-->
                                     <!--</span>-->
                                             <div class="input-group input-group-lg">
-                                                <span ng-show="contractType == 'facilitation'">All playgroup facilitators</span>
-                                                <span ng-show="contractType == 'registration'">All playgroup facilitators</span>
-                                                <span ng-show="contractType == 'enrolment'">All playgroup facilitators</span>
+                                                <span ng-show="contractType == 'facilitation'">Me and all my playgroup facilitators</span>
+                                                <span ng-show="contractType == 'registration'">Me and all my playgroup facilitators</span>
+                                                <span ng-show="contractType == 'enrolment'">Me and all my playgroup facilitators</span>
                                             </div>
                                         </div>
 
@@ -149,23 +149,23 @@
                             <div class="panel-heading justified" ui-set="{'myAccordion': 4}">
                                 <span class="fa fa-question fa-2x"></span>
                                 <span class="fa fa-2x text-center">for</span>
-                                <span class="fa fa-question-circle fa-2x text-right" ui-toggle="uiSidebarRight"></span>
+                                <span class="fa fa-chevron-right fa-2x text-right" ui-toggle="uiSidebarRight"></span>
                             </div>
 
                             <div ui-if="myAccordion == 4" ui-scope-context='4'>
                                 <div class="panel-body">
                                     <div class="btn-group btn-group-lg">
 
-                                        <span ng-show="contractType == 'facilitation'">Each holding this number of playgroups:</span>
-                                        <span ng-show="contractType == 'registration'">Each registering this number of caregivers/children</span>
-                                        <span ng-show="contractType == 'enrolment'">Each enrolling this number of caregivers/children</span>
+                                        <span ng-show="contractType == 'facilitation'">Setting up a playgroup for this number of children:</span>
+                                        <span ng-show="contractType == 'registration'">Completing new child registrations</span>
+                                        <span ng-show="contractType == 'enrolment'">Enrolling children with a playgroup</span>
 
                                         <div class="input-group input-group-lg">
                                             <span class="input-group-addon dropdown-toggle" ui-turn-on='qtyDropdown'>
                                                 <i class="fa fa-ellipsis-v"></i>
                                             </span>
 
-                                            <input type="text" class="form-control" placeholder="Select quantity"
+                                            <input type="text" class="form-control" placeholder="How many?"
                                                 aria-label="Quantity" name="signatureQuantity"
                                                 ng-model="signatureQuantity" required="true" ng-disabled="true"/>
 
@@ -182,7 +182,7 @@
                                                 ui-state="qtyDropdown"
                                                 ui-turn-off="qtyDropdown">
 
-                                                    <li ng-repeat="i in [1,2,3,4,5] track by $index">
+                                                    <li ng-repeat="i in [1,2,3,4,5,6,7,8,9,10] track by $index">
                                                         <a ng-click="signatureQuantityChanged($index + 1);">{{$index + 1}}</a>
                                                     </li>
                                             </ul>
@@ -199,7 +199,7 @@
                             <div class="panel-heading justified" ui-set="{'myAccordion': 5}">
                                 <span class="fa fa-key fa-2x"></span>
                                 <span class="fa fa-2x text-center">if</span>
-                                <span class="fa fa-question-circle fa-2x text-right" ui-toggle="uiSidebarRight"></span>
+                                <span class="fa fa-chevron-right fa-2x text-right" ui-toggle="uiSidebarRight"></span>
                             </div>
 
                             <div ui-if="myAccordion == 5" ui-scope-context='5'>
@@ -209,7 +209,7 @@
                                             A caregiver brings a child to playgroup and presents an SMS PIN code to the facilitator
                                         </span>
                                         <span ng-show="contractType == 'registration'">
-                                            A facilitator registers a caregiver/child and the caregiver confirms registration via SMS
+                                            A valid SMS response is received from the caregiver of a newly registered child
                                         </span>
                                         <span ng-show="contractType == 'enrolment'">
                                             A facilitator enrols a caregiver/child with a playgroup and the caregiver confirms this by presentation of an SMS PIN code
@@ -225,33 +225,47 @@
 
                             <div class="panel-heading justified" ui-set="{'myAccordion': 6}">
                                 <span class="fa fa-clock-o fa-2x"></span>
-                                <span class="fa fa-2x text-center">when</span>
-                                <span class="fa fa-question-circle fa-2x text-right" ui-toggle="uiSidebarRight"></span>
+                                <span class="fa fa-2x text-center">expiry date</span>
+                                <span class="fa fa-chevron-right fa-2x text-right" ui-toggle="uiSidebarRight"></span>
                             </div>
 
                             <div ui-if="myAccordion == 6" ui-scope-context='6'>
                                 <div class="panel-body">
+                                    <!--<h3>starting:</h3>-->
+                                    <!--<div class="input-group input-group-lg">-->
+                                        <!--<span class="input-group-addon"><div class="fa fa-pencil"></div> </span>-->
+                                        <!--<input type="text" name="starting" class="form-control"-->
+                                               <!--aria-label="Description"-->
+                                               <!--placeholder="DD/MM/YYYY" date-->
+                                               <!--ng-model="currentContract.expires"-->
+                                               <!--ng-disabled="currentContract.id != null"/>-->
+                                        <!--<span class="input-group-addon" ng-show="contractForm.expiry.$invalid">-->
+                                            <!--<div class="fa fa-exclamation-triangle"></div>-->
+                                        <!--</span>-->
+                                    <!--</div>-->
+                                    <!--<br/>-->
 
-                                    <div class="input-group input-group-lg">
-                                        <span>Monday<ui-switch ng-model="daysOfWeek.monday"></ui-switch></span>
-                                        <span>Tuesday<ui-switch ng-model="daysOfWeek.tuesday"></ui-switch></span>
-                                        <span>Wednesday<ui-switch ng-model="daysOfWeek.wednesday"></ui-switch></span>
-                                        <span>Thursday<ui-switch ng-model="daysOfWeek.thursday"></ui-switch></span>
-                                        <span>Friday<ui-switch ng-model="daysOfWeek.friday"></ui-switch></span>
-                                    </div>
+                                    <!--<h3>every:</h3>-->
+                                    <!--<div class="input-group input-group-lg">-->
+                                        <!--<span>Monday<ui-switch ng-model="daysOfWeek.monday"></ui-switch></span>-->
+                                        <!--<span>Tuesday<ui-switch ng-model="daysOfWeek.tuesday"></ui-switch></span>-->
+                                        <!--<span>Wednesday<ui-switch ng-model="daysOfWeek.wednesday"></ui-switch></span>-->
+                                        <!--<span>Thursday<ui-switch ng-model="daysOfWeek.thursday"></ui-switch></span>-->
+                                        <!--<span>Friday<ui-switch ng-model="daysOfWeek.friday"></ui-switch></span>-->
+                                    <!--</div>-->
+                                    <!--<br/>-->
 
-                                    <br/>
-
+                                    <!--<h3>until:</h3>-->
                                     <div class="input-group input-group-lg">
                                         <span class="input-group-addon"><div class="fa fa-pencil"></div> </span>
                                         <input type="text" name="expiry" class="form-control"
                                                aria-label="Description"
-                                               placeholder="Expires (DD/MM/YYYY)" date
+                                               placeholder="DD/MM/YYYY" date
                                                ng-model="currentContract.expires"
                                                ng-disabled="currentContract.id != null"/>
-                                    <span class="input-group-addon" ng-show="contractForm.expiry.$invalid">
-                                        <div class="fa fa-exclamation-triangle"></div>
-                                    </span>
+                                        <span class="input-group-addon" ng-show="contractForm.expiry.$invalid">
+                                            <div class="fa fa-exclamation-triangle"></div>
+                                        </span>
                                     </div>
                                 </div>
                             </div>
