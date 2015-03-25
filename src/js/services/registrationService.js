@@ -7,14 +7,14 @@
 
     var registrationFactory = function ($http, $rootScope, config, tokenService, keyService, sessionStorageService) {
 
-        var identityBase = config.identityHost, nacl = config.nacl, factory = {};
+        var identityBase = config.identityHost, nacl = config.nacl, confirmMobile = config.confirmMobile, factory = {};
 
         factory.register = function (firstName, lastName, userName, password, mobile, role) {
 
             var registrar = tokenService.getContext().username;
 
             var userData = {first_name: firstName, last_name: lastName, username: userName, password: password,
-                                mobile_number: mobile, confirm_mobile: false, role: role, registrar: registrar};
+                                mobile_number: mobile, confirm_mobile: confirmMobile, role: role, registrar: registrar};
 
             return $http.post(identityBase + '/users', userData, {'withCredentials': false})
                 .then(function (response) {

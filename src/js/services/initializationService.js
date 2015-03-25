@@ -6,9 +6,12 @@
     var injectParams = ['$http', '$rootScope', 'tokenService', 'blobService'];
 
     var configValue = {
-        apiHost: 'http://localhost:9000',
-        identityHost: 'http://localhost:9002',
-        //identityHost: 'http://54.154.155.144:9002',
+        apiHost: 'http://54.154.155.144:9000',
+        identityHost: 'http://54.154.155.144:9002',
+
+        //apiHost: 'http://localhost:9000',
+        //identityHost: 'http://localhost:9002',
+        confirmMobile: true,
         nacl: '9612700b954743e0b38f2faff35d264c'
     };
 
