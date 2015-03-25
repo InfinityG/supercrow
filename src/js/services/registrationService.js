@@ -11,7 +11,9 @@
 
         factory.register = function (firstName, lastName, userName, password, mobile, role) {
 
-            var registrar = tokenService.getContext().username;
+            var context = tokenService.getContext();
+
+            var registrar = context != null ? context.username : null;
 
             var userData = {first_name: firstName, last_name: lastName, username: userName, password: password,
                                 mobile_number: mobile, confirm_mobile: confirmMobile, role: role, registrar: registrar};

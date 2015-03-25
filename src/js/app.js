@@ -33,7 +33,8 @@
             })
             .when('/', {
                 controller: 'ContractsController',
-                templateUrl: 'contract.html',
+                redirectTo: '/contract/type/registration',
+                //templateUrl: 'contract.html',
                 reloadOnSearch: false
             })
     });

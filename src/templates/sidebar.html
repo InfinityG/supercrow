@@ -1,5 +1,5 @@
 <div class="scrollable">
-    <div class="scrollable-content">
+    <div class="scrollable-content" ng-controller="SideBarController as sidebar">
     <div class="logo">
         <!--<img src="../fonts/DGMT-wht.svg" scale="0" class="center-block logo"/>-->
         <svg version="1.1" id="Layer_1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" x="0px" y="0px"
@@ -27,24 +27,36 @@
         <!--<div class="title">ecd contract manager</div>-->
     <!--</div>-->
 
-        <div class="list-group" ui-turn-off='uiSidebarLeft'>
-            <div class="list-group-item"><h3>Agreements</h3></div>
-            <div class="list-group-item"><h4>Create</h4></div>
-            <a class="list-group-item" href="#/contract/type/facilitation">&nbsp;New playgroup<i class="fa fa-chevron-right pull-right"></i></a>
-            <a class="list-group-item" href="#/contract/type/facilitation">&nbsp;Playgroup vouchers<i class="fa fa-chevron-right pull-right"></i></a>
-            <a class="list-group-item" href="#/contract/type/facilitation">&nbsp;Caregiver incentives<i class="fa fa-chevron-right pull-right"></i></a>
-            <a class="list-group-item" href="#/contract/type/registration">&nbsp;Child registrations<i class="fa fa-chevron-right pull-right"></i></a>
-            <a class="list-group-item" href="#/contract/type/enrolment">&nbsp;Playgroup enrolment<i class="fa fa-chevron-right pull-right"></i></a>
-        </div>
-        <div class="list-group" ui-turn-off='uiSidebarLeft'>
-            <h4><a class="list-group-item" href="#/contracts">My agreements<i class="fa fa-chevron-right pull-right"></i></a></h4>
+        <div class="list-group" ui-turn-off='uiSidebarLeft' ng-hide="currentRole != null">
+            <h4><a class="list-group-item" href="#/login">&nbsp;Please log in<i class="fa fa-chevron-right pull-right"></i></a></h4>
         </div>
 
-        <div class="list-group" ui-turn-off='uiSidebarLeft'>
-            <div class="list-group-item"><h3>Tasks</h3></div>
-            <a class="list-group-item" href="#/login">&nbsp;Create new identity (register a child)<i class="fa fa-chevron-right pull-right"></i></a>
-            <a class="list-group-item" href="#/enrolments">&nbsp;Enrol caregiver<i class="fa fa-chevron-right pull-right"></i></a>
-            <a class="list-group-item" href="#/attendances">&nbsp;Confirm attendance<i class="fa fa-chevron-right pull-right"></i></a>
+        <div ng-show="currentRole != null;">
+            <div class="list-group" ui-turn-off='uiSidebarLeft'>
+                <div class="list-group-item"><h3>Agreements</h3></div>
+                    <div ng-show="currentRole != 'facilitator';">
+                        <div class="list-group-item"><h4>Create</h4></div>
+                        <a class="list-group-item" href="#/contract/type/facilitation">&nbsp;New playgroup<i class="fa fa-chevron-right pull-right"></i></a>
+                        <a class="list-group-item" href="#/contract/type/registration">&nbsp;Child registrations<i class="fa fa-chevron-right pull-right"></i></a>
+                        <a class="list-group-item" href="#/contract/type/enrolment">&nbsp;Playgroup enrolment<i class="fa fa-chevron-right pull-right"></i></a>
+                        <a class="list-group-item" href="#/vouchers">&nbsp;Playgroup vouchers<i class="fa fa-chevron-right pull-right"></i></a>
+                        <a class="list-group-item" href="#/incentives">&nbsp;Caregiver incentives<i class="fa fa-chevron-right pull-right"></i></a>
+
+                    </div>
+                </div>
+            <div class="list-group" ui-turn-off='uiSidebarLeft'>
+                <h4><a class="list-group-item" href="#/contracts">My agreements<i class="fa fa-chevron-right pull-right"></i></a></h4>
+            </div>
+
+            <div class="list-group" ui-turn-off='uiSidebarLeft'>
+                <div class="list-group-item"><h3>Tasks</h3></div>
+
+                <a class="list-group-item" ng-show="currentRole != 'facilitator';" href="#/login">&nbsp;Create new identity<i class="fa fa-chevron-right pull-right"></i></a>
+                <a class="list-group-item" ng-show="currentRole == 'facilitator';" href="#/login">&nbsp;Register a child<i class="fa fa-chevron-right pull-right"></i></a>
+                
+                <a class="list-group-item" href="#/enrolments">&nbsp;Enrol caregiver<i class="fa fa-chevron-right pull-right"></i></a>
+                <a class="list-group-item" href="#/attendances">&nbsp;Confirm attendance<i class="fa fa-chevron-right pull-right"></i></a>
+            </div>
         </div>
     </div>
 </div>
