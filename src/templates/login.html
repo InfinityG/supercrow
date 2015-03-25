@@ -14,21 +14,21 @@
                     <div class="panel-heading">
                         <div class="fa fa-sign-in fa-2x">
                         </div>
-                        <span class="fa fa-2x pull-right">login</span>
-
-
+                        <span class="fa fa-2x pull-right">log in</span>
                     </div>
+
                     <div class="panel-body">
                         <form name="loginForm" novalidate>
                             <div class="input-group input-group-lg">
                                 <span class="input-group-addon fa fa-envelope"></span>
                                 <input type="text" class="form-control" name="email" aria-label="Email"
                                        placeholder="Email" ng-model="userName" required="true"/>
-                            </div>
-                                    <span style="color:red"
-                                          ng-show="loginForm.email.$dirty && loginForm.email.$invalid">
+                                <span style="color:red"
+                                      ng-show="loginForm.email.$dirty && loginForm.email.$invalid">
                                               Email is required!
                                         </span>
+                            </div>
+
                             <br/>
 
                             <div class="input-group input-group-lg">
@@ -37,16 +37,20 @@
                                        aria-label="Password"
                                        placeholder="Password" ng-model="password" required="true"/>
 
-                            </div>
-                                     <span style="color:red"
-                                           ng-show="loginForm.password.$dirty && loginForm.password.$invalid">
+                                <span style="color:red"
+                                      ng-show="loginForm.password.$dirty && loginForm.password.$invalid">
                                               Password is required!
                                         </span>
+                            </div>
+
                             <br/>
-                            <button type="button" ng-show="loginForm.$valid"
-                                    class="btn btn-default btn-lg pull-right"
-                                    ng-click="login(userName, password);">login
-                            </button>
+
+                            <div class="input-group input-group-lg pull-right">
+                                <button type="button" ng-show="loginForm.$valid"
+                                        class="btn btn-default btn-lg pull-right"
+                                        ng-click="login(userName, password);">login
+                                </button>
+                            </div>
                         </form>
                     </div>
                 </div>
@@ -55,10 +59,10 @@
                     <div class="panel-heading justified">
                         <span class="fa fa-pencil fa-2x"></span>
                         <span class="fa fa-2x text-center">person</span>
-                        <span class="fa fa-chevron-right fa-2x text-right" ui-toggle="uiSidebarRight"></span>
+                        <span class="fa fa-chevron-left fa-2x text-right" ui-toggle="uiSidebarRight"></span>
                     </div>
-                    <div class="panel-body">
 
+                    <div class="panel-body">
                         <form name="registrationForm">
                             <div class="input-group input-group-lg">
                                 <span class="input-group-addon fa fa-user"></span>
@@ -136,29 +140,37 @@
                                            ng-model="role"/>
                                 </div>
 
-                                <ul class="dropdown-menu"
-                                    ui-outer-click="Ui.turnOff('roleDropdown')"
-                                    ui-outer-click-if="Ui.active('roleDropdown')"
-                                    role="menu"
-                                    ui-show="roleDropdown"
-                                    ui-state="roleDropdown"
-                                    ui-turn-off="roleDropdown">
+                                <div class="input-group input-group-lg">
+                                    <ul class="dropdown-menu"
+                                        ui-outer-click="Ui.turnOff('roleDropdown')"
+                                        ui-outer-click-if="Ui.active('roleDropdown')"
+                                        role="menu"
+                                        ui-show="roleDropdown"
+                                        ui-state="roleDropdown"
+                                        ui-turn-off="roleDropdown">
 
-                                    <li ng-repeat="role in roles" ng-click="roleSelected(role);">
-                                        <a>{{role}}</a>
-                                    </li>
-                                </ul>
-                            </div>
+                                        <li ng-repeat="role in roles" ng-click="roleSelected(role);">
+                                            <a>{{role}}</a>
+                                        </li>
+                                    </ul>
+
                                      <span style="color:red"
                                            ng-show="registrationForm.role.$dirty && registrationForm.role.$invalid">
                                               Invalid role
                                         </span>
-                            <br/>
+                                </div>
 
-                            <button type="button" ng-show="registrationForm.$valid"
-                                    class="btn btn-default btn-lg pull-right"
-                                    ng-click="register(firstName, lastName, userName, password, mobile, role);">register
-                            </button>
+                                <br/>
+
+                                <div class="input-group input-group-lg pull-right">
+                                    <button type="button" ng-show="registrationForm.$valid"
+                                            class="btn btn-default btn-lg"
+                                            ng-click="register(firstName, lastName, userName, password, mobile, role);">
+                                        register
+                                    </button>
+                                </div>
+                            </div>
+
                         </form>
                     </div>
                 </div>

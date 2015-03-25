@@ -3,32 +3,30 @@
  */
 (function () {
 
-    var injectParams = ['$http', 'config', 'tokenService', 'localStorageService'];
+    var injectParams = ['$http', '$rootScope', 'config', 'tokenService', 'localStorageService'];
 
-    var contactFactory = function ($http, config, tokenService, localStorageService) {
+    var contactFactory = function ($http, $rootScope, config, tokenService, localStorageService) {
 
         var identityBase = config.identityHost, factory = {};
 
-        factory.getContacts= function() {
+        factory.getContacts = function () {
             var context = tokenService.getContext();
-            var username = context.username;
             var userId = context.userId;
 
-            var result = localStorageService.getContacts(userId);
-
-            if (result == null || result.length == 0) {
-                result = factory.refreshContacts(userId, username);
-            }
-
-            return result;
+            return localStorageService.getContacts(userId);
         };
 
-        factory.refreshContacts = function(userId, username){
+        factory.refreshContacts = function (userId, username) {
             return $http.get(identityBase + '/users/associations/' + username, {'withCredentials': false})
                 .then(function (response) {
                     var data = response.data;
                     localStorageService.saveContacts(userId, data);
-                    return data;
+
+                    $rootScope.$broadcast('contactsEvent', {
+                        type: 'Success',
+                        status: response.status,
+                        message: 'Contacts updated'
+                    });
                 });
         };
 

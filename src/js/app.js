@@ -32,11 +32,15 @@
                 reloadOnSearch: false
             })
             .when('/', {
-                controller: 'ContractsController',
-                redirectTo: '/contract/type/registration',
-                //templateUrl: 'contract.html',
+                templateUrl: 'default.html',
                 reloadOnSearch: false
-            })
+            });
+            //.when('/', {
+            //    controller: 'ContractsController',
+            //    redirectTo: '/contract/type/registration',
+            //    //templateUrl: 'contract.html',
+            //    reloadOnSearch: false
+            //})
     });
 
     app.run(function(initializationService){

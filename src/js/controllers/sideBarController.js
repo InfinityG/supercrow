@@ -11,8 +11,6 @@
 
             if(context != null)
                 $scope.currentRole = context.role;
-
-            console.debug('Logged in: ' + context != null);
         }
 
         var loginEventListener = $rootScope.$on('loginEvent', function (event, args) {

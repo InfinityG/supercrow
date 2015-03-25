@@ -19,12 +19,12 @@
         $scope.currentContract = null;
         $scope.contractType = null;
         $scope.signatureQuantity = null;
-        $scope.currentPaymentAmount = {value:null};
+        $scope.currentPaymentAmount = {value: null};
 
         $scope.savedContracts = null;
         $scope.submittedContracts = null;
 
-        $scope.daysOfWeek = {monday: false, tuesday : false, wednesday : false, thursday : false, friday : false};
+        $scope.daysOfWeek = {monday: false, tuesday: false, wednesday: false, thursday: false, friday: false};
 
         function init() {
             var context = tokenService.getContext();
@@ -65,6 +65,7 @@
                     result.push(contact);
             }
 
+            console.debug('Facilitators length: ' + result.length);
             return result;
         };
 

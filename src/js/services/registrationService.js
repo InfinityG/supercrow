@@ -3,9 +3,9 @@
  */
 (function () {
 
-    var injectParams = ['$http', '$rootScope', 'config', 'tokenService', 'keyService', 'sessionStorageService'];
+    var injectParams = ['$http', '$rootScope', 'config', 'tokenService'];
 
-    var registrationFactory = function ($http, $rootScope, config, tokenService, keyService, sessionStorageService) {
+    var registrationFactory = function ($http, $rootScope, config, tokenService) {
 
         var identityBase = config.identityHost, nacl = config.nacl, confirmMobile = config.confirmMobile, factory = {};
 
@@ -20,19 +20,14 @@
 
             return $http.post(identityBase + '/users', userData, {'withCredentials': false})
                 .then(function (response) {
-                    var data = response.data;
-
-                    sessionStorageService.saveAuthToken(data.id, data.token);
-                    var cryptoKey = keyService.generateAESKey(userData.password, nacl);
-
-                    $rootScope.$broadcast('contractEvent', {
-                        type: 'Success',
-                        status: response.status,
-                        message: 'User successfully registered!'
-                    });
+                    //var data = response.data;
+                    //sessionStorageService.saveAuthToken(data.id, data.token);
+                    //var cryptoKey = keyService.generateAESKey(userData.password, nacl);
 
                     //emit this to be used for encrypting newly generated secret signing keys
-                    $rootScope.$broadcast('registrationEvent', {userId: data.id, key: cryptoKey});
+                    //$rootScope.$broadcast('registrationEvent', {userId: data.id, key: cryptoKey});
+
+                    $rootScope.$broadcast('registrationEvent', {userId:context.userId, username:context.username});
                 });
         };
 

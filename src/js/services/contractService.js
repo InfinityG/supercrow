@@ -209,6 +209,18 @@
 
             console.debug('Amount: ' + amount);
 
+            if(facilitators == null || facilitators.length == 0) {
+                //raise an error if no facilitators registered for this user
+                //emit event for modal
+                $rootScope.$broadcast('contractEvent', {
+                    type: 'Error',
+                    status: 0,
+                    message: "No facilitators can be found!"
+                });
+
+                return;
+            }
+
             // get selected days
             var daysArr = [];
             for (var property in daysOfWeek) {
@@ -222,6 +234,7 @@
 
             // we need 1 contract per recipient (ie: per facilitator)
             for (var x = 0; x < facilitators.length; x++) {
+
                // clone the baseContract
                 var facilitatorContract = JSON.parse(JSON.stringify(baseContract));
 

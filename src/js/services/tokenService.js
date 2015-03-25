@@ -35,10 +35,10 @@
                                 tokenData.role, tokenData.token);
                             var cryptoKey = keyService.generateAESKey(userData.password, nacl);
 
-                            $rootScope.$broadcast('loginEvent', {username: username, userId: tokenData.external_id,
-                                role: tokenData.role, key: cryptoKey});
-
-                            $location.path('/');
+                            $rootScope.$broadcast('loginEvent', {
+                                username: username, userId: tokenData.external_id,
+                                role: tokenData.role, key: cryptoKey
+                            });
                         });
                 });
             //note: errors handled by httpInterceptor
